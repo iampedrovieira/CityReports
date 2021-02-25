@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">CityReports</string>
+    <string name="Login_email" translatable="false">Introduza o seu email</string>
+    <string name="Login_senha">Introduza a senha</string>
+</resources>
