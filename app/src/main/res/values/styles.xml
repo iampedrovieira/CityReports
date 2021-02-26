@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="AppNameLong" parent="TextAppearance.AppCompat">
+        <item name="android:textColor">#ffff</item>
+        <item name="fontFamily">@font/vibur</item>
+        <item name="android:textSize">36sp</item>
+    </style>
+    <style name="AppNameShort" parent="TextAppearance.AppCompat">
+        <item name="android:textColor">#669bbc</item>
+        <item name="fontFamily">@font/vibur</item>
+        <item name="android:textSize">36sp</item>
+    </style>
+</resources>

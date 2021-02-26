@@ -1,5 +1,8 @@
 <resources>
     <string name="app_name">CityReports</string>
-    <string name="Login_email" translatable="false">Enter your username</string>
+    <string name="Login_email" translatable="false">Enter your email</string>
     <string name="Login_senha" translatable="false">Enter your password</string>
+    <string name="Login_button_registo" translatable="false">Sign up</string>
+    <string name="Login_button_login" translatable="false">Login</string>
+    <string name="add_note" translatable="false">Add note</string>
 </resources>
