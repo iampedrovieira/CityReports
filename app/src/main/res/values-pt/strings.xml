@@ -6,4 +6,5 @@
     <string name="Login_button_registo" translatable="false">Registar-se</string>
     <string name="Login_button_login" translatable="false">Entrar</string>
     <string name="add_note" translatable="false">Adicionar nota</string>
+    <string name="home" translatable="false">Página inicial</string>
 </resources>
