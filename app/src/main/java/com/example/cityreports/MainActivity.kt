@@ -15,6 +15,9 @@ class MainActivity : AppCompatActivity() {
 
         //Colocar validação do login aqui
         val intent = Intent(this,Initial_page::class.java)
+        //Clear stack
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
+
     }
 }

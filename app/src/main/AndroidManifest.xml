@@ -32,7 +32,6 @@
             android:name=".Initial_page"
             android:label="@string/title_activity_initial_page"></activity>
         <activity android:name=".MenuActivity" />
-        <activity android:name=".PaginaInicial" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

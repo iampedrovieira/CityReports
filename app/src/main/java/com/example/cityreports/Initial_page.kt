@@ -33,7 +33,6 @@ class Initial_page : AppCompatActivity(), OnMapReadyCallback {
 
         val appbar = findViewById<BottomAppBar>(R.id.bottomAppBar)
         appbar.setNavigationOnClickListener{
-
             val intent = Intent(this,MenuActivity::class.java)
             startActivity(intent)
         }

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/blue_secondary"
+    android:background="@color/blue_primary"
     tools:context=".MainActivity">
 
     <TextView
@@ -61,7 +61,8 @@
             android:layout_marginTop="5dp"
             android:ems="10"
             android:inputType="textEmailAddress"
-            android:textColor="#FFFFFF"
+            android:textColor="@color/white"
+
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView7" />
 
@@ -82,7 +83,7 @@
             android:layout_marginTop="5dp"
             android:ems="10"
             android:inputType="textPassword"
-            android:textColor="#FFFFFF"
+            android:textColor="@color/white"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView8" />
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -95,7 +96,7 @@
         android:onClick="buttonLogin"
         android:text="@string/Login_button_login"
         android:textColor="@color/white"
-        app:backgroundTint="@color/blue_primary"
+        app:backgroundTint="@color/blue_secondary"
         app:cornerRadius="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
@@ -107,10 +108,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
-        android:onClick="buttonSignup"
         android:text="@string/Login_button_registo"
         android:textColor="@color/white"
-        app:backgroundTint="@color/blue_primary"
+        app:backgroundTint="@color/blue_secondary"
         app:cornerRadius="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.492"
@@ -123,6 +123,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="15dp"
         android:text="@string/add_note"
+        app:backgroundTint="@color/blue_secondary"
         app:icon="@android:drawable/ic_menu_add"
         app:iconTint="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
