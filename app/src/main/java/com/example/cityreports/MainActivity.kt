@@ -24,6 +24,5 @@ class MainActivity : AppCompatActivity() {
 
         val intent = Intent(this,CreateNote::class.java)
         startActivity(intent)
-
     }
 }
