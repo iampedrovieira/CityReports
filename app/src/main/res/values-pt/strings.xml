@@ -7,9 +7,4 @@
     <string name="Login_button_login" translatable="false">Entrar</string>
     <string name="add_note" translatable="false">Adicionar nota</string>
     <string name="home" translatable="false">Página inicial</string>
-    <string name="title_activity_initial_page">Mapa</string>
-    <string name="my_notes">Minhas notas</string>
-    <string name="my_occurrences">Minhas ocorrências</string>
-    <string name="logout">sair</string>
-    <string name="notes">Notas</string>
 </resources>

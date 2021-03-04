@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/blue_primary"
+    android:background="@color/blue_secondary"
     tools:context=".MainActivity">
 
     <TextView
@@ -61,8 +61,7 @@
             android:layout_marginTop="5dp"
             android:ems="10"
             android:inputType="textEmailAddress"
-            android:textColor="@color/white"
-
+            android:textColor="#FFFFFF"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView7" />
 
@@ -83,20 +82,20 @@
             android:layout_marginTop="5dp"
             android:ems="10"
             android:inputType="textPassword"
-            android:textColor="@color/white"
+            android:textColor="#FFFFFF"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView8" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <Button
         android:id="@+id/buttonLogin"
-        android:layout_width="150dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:onClick="buttonLogin"
         android:text="@string/Login_button_login"
         android:textColor="@color/white"
-        app:backgroundTint="@color/blue_secondary"
+        app:backgroundTint="@color/blue_primary"
         app:cornerRadius="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
@@ -105,12 +104,13 @@
 
     <Button
         android:id="@+id/buttonLogin2"
-        android:layout_width="150dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
+        android:onClick="buttonSignup"
         android:text="@string/Login_button_registo"
         android:textColor="@color/white"
-        app:backgroundTint="@color/blue_secondary"
+        app:backgroundTint="@color/blue_primary"
         app:cornerRadius="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.492"
@@ -119,27 +119,15 @@
 
     <Button
         android:id="@+id/button"
-        android:layout_width="130dp"
-        android:layout_height="55dp"
-        android:layout_marginStart="65dp"
-        android:layout_marginLeft="65dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginBottom="15dp"
         android:text="@string/add_note"
-        app:backgroundTint="@color/blue_secondary"
+        app:icon="@android:drawable/ic_menu_add"
         app:iconTint="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent" />
-
-    <Button
-        android:id="@+id/button2"
-        android:layout_width="130dp"
-        android:layout_height="55dp"
-        android:layout_marginEnd="65dp"
-        android:layout_marginRight="65dp"
-        android:layout_marginBottom="15dp"
-        android:text="@string/notes"
-        app:backgroundTint="@color/blue_secondary"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
