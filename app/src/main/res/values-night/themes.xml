@@ -2,11 +2,12 @@
     <!-- Base application theme. -->
     <style name="Theme.CityReports" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">#62bbc1</item>
+        <item name="colorPrimary">@color/blue_secondary</item>
+        <item name="colorOnPrimary">@color/blue_primary</item>
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/blue_primary</item>
         <!-- Status bar color. -->
-        <item name="android:statusBarColor" tools:targetApi="l">@color/blue_secondary</item>
+        <item name="android:statusBarColor" tools:targetApi="l">@color/blue_primary</item>
         <!-- Customize your theme here. -->
     </style>
 </resources>
