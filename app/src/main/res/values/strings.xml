@@ -12,4 +12,5 @@
     <string name="my_occurrences">My occurrences</string>
     <string name="perfil">Perfil</string>
     <string name="logout">Logout</string>
+    <string name="notes">Notes</string>
 </resources>

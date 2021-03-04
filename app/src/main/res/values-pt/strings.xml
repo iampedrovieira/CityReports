@@ -11,4 +11,5 @@
     <string name="my_notes">Minhas notas</string>
     <string name="my_occurrences">Minhas ocorrências</string>
     <string name="logout">sair</string>
+    <string name="notes">Notas</string>
 </resources>
