@@ -23,6 +23,13 @@ class MenuActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+        val note = findViewById<CardView>(R.id.cardNotes)
+        note.setOnClickListener{
+            val intent = Intent(this,NoteOpen::class.java)
+
+            startActivity(intent)
+        }
+
 
     }
 }
