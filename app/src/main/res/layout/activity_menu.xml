@@ -31,17 +31,20 @@
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:layout_marginTop="10dp"
+                android:src="@drawable/ic_description_24px"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                android:src="@drawable/ic_description_24px" />
-
+                app:layout_constraintTop_toTopOf="parent" />
             <TextView
                 android:id="@+id/textNotes"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="3dp"
+                android:layout_marginLeft="3dp"
                 android:layout_marginTop="5dp"
+                android:layout_marginEnd="3dp"
+                android:layout_marginRight="3dp"
                 android:text="@string/my_notes"
                 android:textColor="@color/blue_primary"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -75,19 +78,21 @@
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:layout_marginTop="10dp"
+                android:src="@drawable/ic_report_24px"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                android:src="@drawable/ic_report_24px" />
-
-            <TextView
+                app:layout_constraintTop_toTopOf="parent" />
+           <TextView
                 android:id="@+id/textOcurrences"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
+                android:layout_marginBottom="10dp"
+                android:gravity="center"
                 android:text="@string/my_occurrences"
                 android:textColor="@color/blue_primary"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"

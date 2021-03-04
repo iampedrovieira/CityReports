@@ -10,7 +10,10 @@
     <string name="title_activity_initial_page">Map</string>
     <string name="my_notes">My notes</string>
     <string name="my_occurrences">My occurrences</string>
-    <string name="perfil">Perfil</string>
+    <string name="perfil" translatable="false">Perfil</string>
     <string name="logout">Logout</string>
     <string name="notes">Notes</string>
+    <string name="create_note">Create note</string>
+    <string name="save">Save</string>
+    <string name="note">Note</string>
 </resources>

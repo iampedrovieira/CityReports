@@ -20,4 +20,9 @@ class MainActivity : AppCompatActivity() {
         startActivity(intent)
 
     }
+    fun buttonCreateNote(view: View){
+
+        val intent = Intent(this,CreateNote::class.java)
+        startActivity(intent)
+    }
 }
