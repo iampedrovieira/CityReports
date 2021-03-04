@@ -12,4 +12,6 @@
     <string name="my_occurrences">Minhas ocorrências</string>
     <string name="logout">sair</string>
     <string name="notes">Notas</string>
+    <string name="create_note">Criar nota</string>
+    <string name="save">Guardar</string>
 </resources>
