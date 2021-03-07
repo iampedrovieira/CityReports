@@ -7,13 +7,13 @@
          location permissions for the "MyLocation" functionality.
     -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
          Google Maps Android API v2, but you must specify either coarse or fine
          location permissions for the "MyLocation" functionality.
     -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -21,7 +21,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.CityReports">
-        <activity android:name=".NoteOpen"></activity>
+        <activity android:name=".ListNotes"></activity>
+        <activity android:name=".NoteOpen" />
         <activity android:name=".CreateNote" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
@@ -37,7 +38,7 @@
 
         <activity
             android:name=".Initial_page"
-            android:label="@string/title_activity_initial_page"></activity>
+            android:label="@string/title_activity_initial_page" />
         <activity android:name=".MenuActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
