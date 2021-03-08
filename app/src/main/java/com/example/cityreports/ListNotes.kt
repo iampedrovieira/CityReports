@@ -53,7 +53,7 @@ class ListNotes : AppCompatActivity(),OnItemClickListener {
     }
 
     fun buttonCreateNote(view: View){
-        val intent = Intent(this,CreateNote::class.java)
+        val intent = Intent(this,NoteOpen::class.java)
         startActivity(intent)
     }
 }

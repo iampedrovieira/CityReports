@@ -2,6 +2,8 @@ package com.example.cityreports
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
@@ -15,16 +17,19 @@ class NoteOpen : AppCompatActivity() {
         supportActionBar?.setTitle(R.string.note)
 
     }
-
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        val inflater: MenuInflater = menuInflater
+        inflater.inflate(R.menu.menu_delete,menu)
+        return true
+    }
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if(item.itemId == android.R.id.home){
             onBackPressed()
         }
+        if(item.itemId == R.id.Delete){
+            Toast.makeText(applicationContext, "delete", Toast.LENGTH_LONG).show()
+        }
         return super.onOptionsItemSelected(item)
-    }
-
-    fun deleteNote(view: View){
-        Toast.makeText(applicationContext, "delete", Toast.LENGTH_LONG).show()
     }
 
     fun saveNote(view: View){
