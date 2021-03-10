@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -23,8 +24,6 @@ class NoteOpen : AppCompatActivity() {
         setSupportActionBar(findViewById(R.id.toolbarNote))
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setTitle(R.string.note)
-
-
         //Colocar o id e descText
         noteId = intent.getIntExtra("ID",0)
         descText = findViewById(R.id.textAreaNote2)
@@ -40,21 +39,15 @@ class NoteOpen : AppCompatActivity() {
             val replyIntent = Intent()
             if(descText.text.toString()==""){
                 replyIntent.putExtra("ID",noteId)
-                replyIntent.putExtra("DELETE",true)
                 setResult(Activity.RESULT_CANCELED,replyIntent)
                 Toast.makeText(applicationContext, "Note Deleted", Toast.LENGTH_LONG).show()
             }
-            Toast.makeText(applicationContext, "Note", Toast.LENGTH_LONG).show()
+
             finish()
-        //Volta para gravar,
-
-                //Se o text tiver vazio apaga
-
         }
         if(item.itemId == R.id.Delete){
             val replyIntent = Intent()
             replyIntent.putExtra("ID",noteId)
-            replyIntent.putExtra("DELETE",true)
             setResult(Activity.RESULT_CANCELED,replyIntent)
             Toast.makeText(applicationContext, "Note Deleted", Toast.LENGTH_LONG).show()
             finish()
@@ -66,7 +59,8 @@ class NoteOpen : AppCompatActivity() {
         Toast.makeText(applicationContext, "Save", Toast.LENGTH_LONG).show()
         val replyIntent = Intent()
         replyIntent.putExtra("ID",noteId)
-        replyIntent.putExtra("Description",descText.text)
+        replyIntent.putExtra("Description",descText.text.toString())
+        Log.v("TESTE","desde ${descText.text.toString()}")
         setResult(Activity.RESULT_OK,replyIntent)
         Toast.makeText(applicationContext, "Saved", Toast.LENGTH_LONG).show()
         finish()

@@ -29,7 +29,12 @@ class NoteAdapter internal constructor(
     override fun onBindViewHolder(holder: LineViewHolder, position: Int) {
 
         val currentPlace = notes[position]
-        holder.description.text = currentPlace.description
+        if(currentPlace.description.length>30){
+            holder.description.text = currentPlace.description.take(30) +" ..."
+        }else{
+            holder.description.text = currentPlace.description
+        }
+
     }
     inner class LineViewHolder(itemView: View):RecyclerView.ViewHolder(itemView),View.OnClickListener
         {
@@ -45,7 +50,6 @@ class NoteAdapter internal constructor(
             }
         }
     }
-
     internal fun setNotes(notes: List<Note>) {
         this.notes = notes
         notifyDataSetChanged()

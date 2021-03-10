@@ -17,9 +17,12 @@ interface NoteDao {
     @Query("DELETE FROM note_table")
     suspend fun deleteAll()
 
+    @Query("SELECT * FROM note_table order by id DESC LIMIT 1")
+    suspend fun getLastNote():Note
+
     @Query("DELETE FROM note_table where id == :id")
     suspend fun deleteNote(id: Int)
 
     @Update
-    suspend fun updateCity(note: Note)
+    suspend fun updateNote(note: Note)
 }
