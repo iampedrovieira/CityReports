@@ -57,15 +57,19 @@ class NoteOpen : AppCompatActivity() {
             replyIntent.putExtra("DELETE",true)
             setResult(Activity.RESULT_CANCELED,replyIntent)
             Toast.makeText(applicationContext, "Note Deleted", Toast.LENGTH_LONG).show()
-                //Apagar
-
+            finish()
         }
         return super.onOptionsItemSelected(item)
     }
 
     fun saveNote(view: View){
         Toast.makeText(applicationContext, "Save", Toast.LENGTH_LONG).show()
-        // Manda os dados para o ListOpen para gravar
+        val replyIntent = Intent()
+        replyIntent.putExtra("ID",noteId)
+        replyIntent.putExtra("Description",descText.text)
+        setResult(Activity.RESULT_OK,replyIntent)
+        Toast.makeText(applicationContext, "Saved", Toast.LENGTH_LONG).show()
+        finish()
 
     }
 }

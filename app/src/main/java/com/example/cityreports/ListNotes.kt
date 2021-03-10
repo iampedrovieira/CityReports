@@ -58,8 +58,6 @@ class ListNotes : AppCompatActivity(),OnItemClickListener {
                         noteViewModel.deleteNote(nid)
                     }
             }
-
-
         }
 
     }
