@@ -52,16 +52,24 @@ class ListNotes : AppCompatActivity(),OnItemClickListener {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == newWordActivityRequestCode && resultCode == Activity.RESULT_OK){
-            if(data?.getIntExtra("ID",-1) != null) {
-                val nid = data.getIntExtra("ID", -1)
+            if(data?.getBooleanExtra("New",false) == true){
                 val desc = data.getStringExtra("Description")
-
                 if(desc != null){
+                    val note = Note(description = desc)
+                    noteViewModel.insert(note)
+                }
 
-                    val note = Note(nid,desc)
-                    noteViewModel.updateNote(note)
+            }else{
+                if(data?.getIntExtra("ID",-1) != null) {
+                    val nid = data.getIntExtra("ID", -1)
+                    val desc = data.getStringExtra("Description")
+                    if(desc != null){
+                        val note = Note(nid,desc)
+                        noteViewModel.updateNote(note)
+                    }
                 }
             }
+
         }
         if (requestCode == newWordActivityRequestCode && resultCode == Activity.RESULT_CANCELED){
 
@@ -84,20 +92,11 @@ class ListNotes : AppCompatActivity(),OnItemClickListener {
         intent.putExtra("ID",note.id)
         intent.putExtra("Description",note.description)
         startActivityForResult(intent, newWordActivityRequestCode)
-
     }
 
      fun buttonCreateNote(view: View){
-         GlobalScope.launch {
-             val noteNew = Note(description="")
-             noteViewModel.insert(noteNew)
              val intent = Intent(this@ListNotes, NoteOpen::class.java)
-             val note = noteViewModel.getLastNote()
-             intent.putExtra("ID",note.id)
-             intent.putExtra("Description","")
+             intent.putExtra("New",true)
              startActivityForResult(intent, newWordActivityRequestCode)
-         }
-
-
     }
 }

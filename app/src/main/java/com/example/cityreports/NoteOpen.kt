@@ -17,6 +17,7 @@ class NoteOpen : AppCompatActivity() {
 
     private lateinit var descText:TextInputEditText
     private var noteId:Int? = null
+    private var newNote:Boolean =false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,10 +25,10 @@ class NoteOpen : AppCompatActivity() {
         setSupportActionBar(findViewById(R.id.toolbarNote))
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setTitle(R.string.note)
-        //Colocar o id e descText
         noteId = intent.getIntExtra("ID",0)
         descText = findViewById(R.id.textAreaNote2)
         descText.setText(intent.getStringExtra("Description"))
+        newNote=intent.getBooleanExtra("New",false)
     }
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         val inflater: MenuInflater = menuInflater
@@ -42,7 +43,6 @@ class NoteOpen : AppCompatActivity() {
                 setResult(Activity.RESULT_CANCELED,replyIntent)
                 Toast.makeText(applicationContext, "Note Deleted", Toast.LENGTH_LONG).show()
             }
-
             finish()
         }
         if(item.itemId == R.id.Delete){
@@ -60,9 +60,11 @@ class NoteOpen : AppCompatActivity() {
         val replyIntent = Intent()
         replyIntent.putExtra("ID",noteId)
         replyIntent.putExtra("Description",descText.text.toString())
-        Log.v("TESTE","desde ${descText.text.toString()}")
+        if(newNote){
+            replyIntent.putExtra("New",true)
+            replyIntent.putExtra("Description",descText.text.toString())
+        }
         setResult(Activity.RESULT_OK,replyIntent)
-        Toast.makeText(applicationContext, "Saved", Toast.LENGTH_LONG).show()
         finish()
 
     }
