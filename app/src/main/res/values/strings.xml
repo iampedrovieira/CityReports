@@ -16,4 +16,6 @@
     <string name="create_note">Create note</string>
     <string name="save">Save</string>
     <string name="note">Note</string>
+    <string name="sp_login">sp_login</string>
+    <string name="sp_login_value">sp_login_value</string>
 </resources>
