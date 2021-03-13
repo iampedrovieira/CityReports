@@ -38,11 +38,7 @@ class NoteOpen : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if(item.itemId == android.R.id.home){
             val replyIntent = Intent()
-            if(descText.text.toString()==""){
-                replyIntent.putExtra("ID",noteId)
-                setResult(Activity.RESULT_CANCELED,replyIntent)
-                Toast.makeText(applicationContext, "Note Deleted", Toast.LENGTH_LONG).show()
-            }
+            setResult(Activity.RESULT_OK,replyIntent)
             finish()
         }
         if(item.itemId == R.id.Delete){
@@ -60,10 +56,24 @@ class NoteOpen : AppCompatActivity() {
         val replyIntent = Intent()
         replyIntent.putExtra("ID",noteId)
         replyIntent.putExtra("Description",descText.text.toString())
+
         if(newNote){
+
+            if(descText.text.toString()==""){
+                setResult(Activity.RESULT_OK,replyIntent)
+                finish()
+            }
             replyIntent.putExtra("New",true)
             replyIntent.putExtra("Description",descText.text.toString())
+        }else{
+            if(descText.text.toString()==""){
+                replyIntent.putExtra("ID",noteId)
+                setResult(Activity.RESULT_CANCELED,replyIntent)
+                Toast.makeText(applicationContext, "Note Deleted", Toast.LENGTH_LONG).show()
+                finish()
+            }
         }
+
         setResult(Activity.RESULT_OK,replyIntent)
         finish()
 
