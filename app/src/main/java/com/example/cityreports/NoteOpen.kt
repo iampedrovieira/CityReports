@@ -45,14 +45,14 @@ class NoteOpen : AppCompatActivity() {
             val replyIntent = Intent()
             replyIntent.putExtra("ID",noteId)
             setResult(Activity.RESULT_CANCELED,replyIntent)
-            Toast.makeText(applicationContext, "Note Deleted", Toast.LENGTH_LONG).show()
+            Toast.makeText(applicationContext, R.string.note_deleted, Toast.LENGTH_LONG).show()
             finish()
         }
         return super.onOptionsItemSelected(item)
     }
 
     fun saveNote(view: View){
-        Toast.makeText(applicationContext, "Save", Toast.LENGTH_LONG).show()
+        Toast.makeText(applicationContext,  R.string.note_saved, Toast.LENGTH_LONG).show()
         val replyIntent = Intent()
         replyIntent.putExtra("ID",noteId)
         replyIntent.putExtra("Description",descText.text.toString())
@@ -69,7 +69,7 @@ class NoteOpen : AppCompatActivity() {
             if(descText.text.toString()==""){
                 replyIntent.putExtra("ID",noteId)
                 setResult(Activity.RESULT_CANCELED,replyIntent)
-                Toast.makeText(applicationContext, "Note Deleted", Toast.LENGTH_LONG).show()
+                Toast.makeText(applicationContext, R.string.note_deleted, Toast.LENGTH_LONG).show()
                 finish()
             }
         }
