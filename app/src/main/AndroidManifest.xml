@@ -23,7 +23,6 @@
         android:theme="@style/Theme.CityReports">
         <activity android:name=".ListNotes"></activity>
         <activity android:name=".NoteOpen" />
-        <activity android:name=".CreateNote" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").

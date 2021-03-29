@@ -18,4 +18,6 @@
     <string name="note">Note</string>
     <string name="sp_login">sp_login</string>
     <string name="sp_login_value">sp_login_value</string>
+    <string name="note_deleted">Note deleted</string>
+    <string name="note_saved">Note saved</string>
 </resources>

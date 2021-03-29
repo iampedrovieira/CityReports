@@ -15,4 +15,6 @@
     <string name="create_note">Criar nota</string>
     <string name="save">Guardar</string>
     <string name="note">Nota</string>
+    <string name="note_deleted">Nota apagada</string>
+    <string name="note_saved">Nota guardada</string>
 </resources>
