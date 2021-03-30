@@ -7,6 +7,6 @@ import retrofit2.http.POST
 
 interface EndPoints {
     @FormUrlEncoded
-    @POST("/login")
-    fun verifyLogin(@Field("username")username:String,@Field("pass")password:String): Call<List<OutPutLogin>>
+    @POST("login")
+    fun verifyLogin(@Field("username")username:String,@Field("pass")password:String): Call<OutPutLogin>
 }
