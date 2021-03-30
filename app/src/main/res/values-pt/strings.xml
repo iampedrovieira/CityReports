@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">CityReports</string>
-    <string name="Login_email" translatable="false">Introduza o seu email</string>
+    <string name="Login_email" translatable="false">Introduza o nome de utilizador</string>
     <string name="Login_senha">Introduza a senha</string>
     <string name="Login_button_registo" translatable="false">Registar-se</string>
     <string name="Login_button_login" translatable="false">Entrar</string>
@@ -17,4 +17,6 @@
     <string name="note">Nota</string>
     <string name="note_deleted">Nota apagada</string>
     <string name="note_saved">Nota guardada</string>
+    <string name="login_fail">nome de utilizador ou senha invalido</string>
+    <string name="welcome">"bem vindo "</string>
 </resources>
