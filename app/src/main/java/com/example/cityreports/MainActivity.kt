@@ -41,23 +41,29 @@ class MainActivity : AppCompatActivity() {
         var password:EditText = findViewById(R.id.editTextTextPassword3)
         val call = request.verifyLogin(username.text.toString(),password.text.toString())
 
-        call.enqueue(object: Callback<List<OutPutLogin>> {
-            override fun onResponse(call: Call<List<OutPutLogin>>, response: Response<List<OutPutLogin>>) {
-                val sharedPref:SharedPreferences = getSharedPreferences(getString(R.string.sp_login),Context.MODE_PRIVATE)
-                with(sharedPref.edit()){
-                    putBoolean(getString(R.string.sp_login_value),true)
-                    commit()
-                }
-                val name: String? = response.body()?.get(0)?.name
-                Toast.makeText(applicationContext, StringBuilder().append(R.string.welcome).append(name) , Toast.LENGTH_LONG).show()
-                //Clear stack
-                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                startActivity(intent)
+        call.enqueue(object: Callback<OutPutLogin> {
+            override fun onResponse(call: Call<OutPutLogin>, response: Response<OutPutLogin>) {
 
+                if(response.isSuccessful ){
+                    val user:OutPutLogin = response.body()!!
+                        if(user.userid !="-1"){
+                            val sharedPref:SharedPreferences = getSharedPreferences(getString(R.string.sp_login),Context.MODE_PRIVATE)
+                            with(sharedPref.edit()){
+                                putBoolean(getString(R.string.sp_login_value),true)
+                                commit()
+                            }
+                            //Toast.makeText(applicationContext, "${R.string.welcome.to} ${user.name} " , Toast.LENGTH_LONG).show()
+                            //Clear stack
+                            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                            startActivity(intent)
+                        }else{
+                            Toast.makeText(applicationContext, R.string.login_fail , Toast.LENGTH_LONG).show()
+                        }
+                }
             }
 
-            override fun onFailure(call: Call<List<OutPutLogin>>, t: Throwable) {
-                Toast.makeText(applicationContext, t.message, Toast.LENGTH_LONG).show()
+            override fun onFailure(call: Call<OutPutLogin>, t: Throwable) {
+                Log.v("TESTE",t.message.toString())
             }
 
 
