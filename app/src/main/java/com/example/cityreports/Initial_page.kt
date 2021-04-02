@@ -38,7 +38,8 @@ class Initial_page : AppCompatActivity(), OnMapReadyCallback {
         }
         val addButton: View = findViewById(R.id.addButton)
         addButton.setOnClickListener { view ->
-            Toast.makeText(applicationContext, "Adicionar", Toast.LENGTH_LONG).show()
+            val intent = Intent(this,OccurrenceOpen::class.java)
+            startActivity(intent)
         }
     }
 
@@ -54,11 +55,26 @@ class Initial_page : AppCompatActivity(), OnMapReadyCallback {
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
         getLocationAccess()
-        /*// Add a marker in Sydney and move the camera
+        /*mMap.setOnMarkerClickListener { marker ->
+            if (marker.isInfoWindowShown) {
+                marker.hideInfoWindow()
+            } else {
+                marker.showInfoWindow()
+            }
+            true
+        }
+        // Add a marker in Sydney and move the camera
         val sydney = LatLng(-34.0, 151.0)
         mMap.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"))
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
-        */
+
+        val melbourneLatLng = LatLng(-37.81319, 144.96298)
+        val melbourne = mMap.addMarker(
+            MarkerOptions()
+                .position(melbourneLatLng)
+                .title("Melbourne")
+        )*/
+
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {

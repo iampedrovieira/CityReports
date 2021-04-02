@@ -22,4 +22,8 @@
     <string name="note_saved">Note saved</string>
     <string name="login_fail">username or password invalid</string>
     <string name="welcome">welcome</string>
+    <string name="ocurrences">ocurrences</string>
+    <string name="Description">Description</string>
+    <string name="take_photo">Take a photo</string>
+    <string name="update_local">Update localization</string>
 </resources>
