@@ -19,4 +19,8 @@
     <string name="note_saved">Nota guardada</string>
     <string name="login_fail">nome de utilizador ou senha invalido</string>
     <string name="welcome">"bem vindo "</string>
+    <string name="ocurrences">Ocorrência</string>
+    <string name="Description">Descrição</string>
+    <string name="take_photo">Tire uma foto</string>
+    <string name="update_local">Atualizar localização</string>
 </resources>
