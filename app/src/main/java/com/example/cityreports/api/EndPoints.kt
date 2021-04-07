@@ -14,4 +14,10 @@ interface EndPoints {
     @FormUrlEncoded
     @POST("login")
     fun verifyLogin(@Field("username")username:String,@Field("pass")password:String): Call<OutPutLogin>
+
+    @FormUrlEncoded
+    @POST("create-occurrences")
+    fun createOccurrence(@Field("description")description:String,@Field("userid")userid:Int,
+                         @Field("typeid")typeid:Int,@Field("date_")date_:String,
+                         @Field("lat")lat:Int,@Field("lng")lng:Int): Call<OutPutLogin>
 }
