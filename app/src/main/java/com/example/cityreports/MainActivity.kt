@@ -50,6 +50,7 @@ class MainActivity : AppCompatActivity() {
                             val sharedPref:SharedPreferences = getSharedPreferences(getString(R.string.sp_login),Context.MODE_PRIVATE)
                             with(sharedPref.edit()){
                                 putBoolean(getString(R.string.sp_login_value),true)
+                                putInt(getString(R.string.sp_userid_value),user.userid.toInt())
                                 commit()
                             }
                             //Toast.makeText(applicationContext, "${R.string.welcome.to} ${user.name} " , Toast.LENGTH_LONG).show()

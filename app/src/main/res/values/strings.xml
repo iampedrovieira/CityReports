@@ -18,6 +18,7 @@
     <string name="note">Note</string>
     <string name="sp_login">sp_login</string>
     <string name="sp_login_value">sp_login_value</string>
+    <string name="sp_userid_value">sp_userid_value</string>
     <string name="note_deleted">Note deleted</string>
     <string name="note_saved">Note saved</string>
     <string name="login_fail">username or password invalid</string>

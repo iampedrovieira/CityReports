@@ -52,6 +52,27 @@ class Initial_page : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        val request = ServiceBuilder.buildService(EndPoints::class.java)
+
+        val call = request.getAllOccurrences()
+        call.enqueue(object: Callback<List<Occurrence>>{
+            override fun onResponse(call: Call<List<Occurrence>>, response: Response<List<Occurrence>>) {
+                mMap.clear()
+                response.body()?.forEach {
+                    val latlng = LatLng(it.lat.toDouble(), it.lng.toDouble())
+                    mMap.addMarker(MarkerOptions().position(latlng).title(it.description + " " + it.date_))
+                }
+            }
+
+            override fun onFailure(call: Call<List<Occurrence>>, t: Throwable) {
+                Toast.makeText(applicationContext, t.message, Toast.LENGTH_LONG).show()
+            }
+
+        })
+    }
+
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
@@ -117,9 +138,6 @@ class Initial_page : AppCompatActivity(), OnMapReadyCallback {
                 finish()
             }
         }
-    }
-    fun addButton(view: View){
-        Toast.makeText(applicationContext, "addicionar", Toast.LENGTH_LONG).show()
     }
     private fun getLocationAccess() {
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {

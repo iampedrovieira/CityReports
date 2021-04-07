@@ -1,5 +1,6 @@
 package com.example.cityreports.api
 
+import android.text.Editable
 import retrofit2.Call
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
@@ -17,7 +18,7 @@ interface EndPoints {
 
     @FormUrlEncoded
     @POST("create-occurrences")
-    fun createOccurrence(@Field("description")description:String,@Field("userid")userid:Int,
-                         @Field("typeid")typeid:Int,@Field("date_")date_:String,
-                         @Field("lat")lat:Int,@Field("lng")lng:Int): Call<OutPutLogin>
+    fun createOccurrence(@Field("description") description: String, @Field("userid") userid: Int,
+                         @Field("typeid") typeid:Int,
+                         @Field("lat") lat:Int, @Field("lng") lng:Int): Call<OutPutOccurrence>
 }

@@ -1,14 +1,31 @@
 package com.example.cityreports
 
-import android.app.Activity
-import android.content.Intent
+import android.content.Context
+import android.content.SharedPreferences
+import android.location.LocationListener
+import android.location.LocationManager
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.widget.*
+import androidx.annotation.RequiresApi
+import androidx.core.app.ActivityCompat
+import com.example.cityreports.api.EndPoints
+import com.example.cityreports.api.OutPutLogin
+import com.example.cityreports.api.OutPutOccurrence
+import com.example.cityreports.api.ServiceBuilder
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.LocalTime
+import java.util.*
 
 class OccurrenceOpen : AppCompatActivity(),AdapterView.OnItemSelectedListener{
 
@@ -31,7 +48,6 @@ class OccurrenceOpen : AppCompatActivity(),AdapterView.OnItemSelectedListener{
         description= findViewById(R.id.textAreaOccurrence)
         textPhoto= findViewById(R.id.textPhoto)
         textLocalization= findViewById(R.id.textViewLocalization)
-
 
         spinner= findViewById(R.id.spinner_type)
 
@@ -71,9 +87,28 @@ class OccurrenceOpen : AppCompatActivity(),AdapterView.OnItemSelectedListener{
     }
 
     fun onClickPhoto(){
+        //Tirar photo e gravar a mesma
+    }
+    fun onClickLocalization(){
 
     }
-    fun onClickSave(){
+    fun onClickSave(view: View){
 
+        // Create markers on db
+        val request = ServiceBuilder.buildService(EndPoints::class.java)
+        val sharedPref:SharedPreferences = getSharedPreferences(getString(R.string.sp_login),Context.MODE_PRIVATE)
+        val userid = sharedPref.getInt(getString(R.string.sp_userid_value),0)
+
+        val call = request.createOccurrence(description.toString(),userid,typeid,lat,lng)
+        call.enqueue(object: Callback<OutPutOccurrence> {
+            override fun onResponse(call: Call<OutPutOccurrence>, response: Response<OutPutOccurrence>) {
+                if (response.body()?.status!!){
+                    finish()
+                }
+            }
+            override fun onFailure(call: Call<OutPutOccurrence>, t: Throwable) {
+                Toast.makeText(applicationContext, t.message , Toast.LENGTH_LONG).show()
+            }
+        })
     }
 }
