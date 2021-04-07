@@ -26,4 +26,10 @@
     <string name="Description">Description</string>
     <string name="take_photo">Take a photo</string>
     <string name="update_local">Update localization</string>
+    <string-array name="type_array">
+        <item>Transito</item>
+        <item>Buraco na via</item>
+    </string-array>
+    <string name="type">Type</string>
+
 </resources>
