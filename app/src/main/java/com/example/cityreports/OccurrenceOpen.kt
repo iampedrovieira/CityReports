@@ -1,7 +1,10 @@
 package com.example.cityreports
 
+import android.Manifest
 import android.content.Context
 import android.content.SharedPreferences
+import android.content.pm.PackageManager
+import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Build
@@ -19,6 +22,8 @@ import com.example.cityreports.api.EndPoints
 import com.example.cityreports.api.OutPutLogin
 import com.example.cityreports.api.OutPutOccurrence
 import com.example.cityreports.api.ServiceBuilder
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -32,12 +37,14 @@ class OccurrenceOpen : AppCompatActivity(),AdapterView.OnItemSelectedListener{
     private lateinit var description:EditText
     private lateinit var textLocalization:TextView
     private lateinit var textPhoto:TextView
-    private var lat:Int = 0
-    private var lng:Int = 0
+    private var lat:Double = 0.0
+    private var lng:Double = 0.0
     private var typeid:Int =1
     private lateinit var date_:String
     private lateinit var img:String
     lateinit var spinner:Spinner
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -89,8 +96,25 @@ class OccurrenceOpen : AppCompatActivity(),AdapterView.OnItemSelectedListener{
     fun onClickPhoto(){
         //Tirar photo e gravar a mesma
     }
-    fun onClickLocalization(){
-
+    fun onClickLocalization(view:View){
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return
+        }
+        fusedLocationClient.lastLocation
+                .addOnSuccessListener { location : Location? ->
+                    if (location != null) {
+                        lat = location.latitude
+                        lng = location.longitude
+                    }
+                }
     }
     fun onClickSave(view: View){
 

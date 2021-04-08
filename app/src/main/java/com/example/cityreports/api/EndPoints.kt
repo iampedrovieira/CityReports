@@ -20,5 +20,5 @@ interface EndPoints {
     @POST("create-occurrences")
     fun createOccurrence(@Field("description") description: String, @Field("userid") userid: Int,
                          @Field("typeid") typeid:Int,
-                         @Field("lat") lat:Int, @Field("lng") lng:Int): Call<OutPutOccurrence>
+                         @Field("lat") lat:Double, @Field("lng") lng:Double): Call<OutPutOccurrence>
 }
