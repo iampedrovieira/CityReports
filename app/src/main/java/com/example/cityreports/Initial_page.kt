@@ -8,6 +8,7 @@ import android.location.Location
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -35,6 +36,8 @@ class Initial_page : AppCompatActivity(), OnMapReadyCallback {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_initial_page)
+        val progress: ProgressBar = findViewById(R.id.progressBar_map)
+        progress.visibility = View.VISIBLE
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         val mapFragment = supportFragmentManager
                 .findFragmentById(R.id.map) as SupportMapFragment
@@ -55,7 +58,8 @@ class Initial_page : AppCompatActivity(), OnMapReadyCallback {
     override fun onResume() {
         super.onResume()
         val request = ServiceBuilder.buildService(EndPoints::class.java)
-
+        val progress: ProgressBar = findViewById(R.id.progressBar_map)
+        progress.visibility = View.VISIBLE
         val call = request.getAllOccurrences()
         call.enqueue(object: Callback<List<Occurrence>>{
             override fun onResponse(call: Call<List<Occurrence>>, response: Response<List<Occurrence>>) {
@@ -64,6 +68,7 @@ class Initial_page : AppCompatActivity(), OnMapReadyCallback {
                     val latlng = LatLng(it.lat.toDouble(), it.lng.toDouble())
                     mMap.addMarker(MarkerOptions().position(latlng).title(it.description + " " + it.date_))
                 }
+                progress.visibility = View.INVISIBLE
             }
 
             override fun onFailure(call: Call<List<Occurrence>>, t: Throwable) {
@@ -103,6 +108,8 @@ class Initial_page : AppCompatActivity(), OnMapReadyCallback {
                     val latlng = LatLng(it.lat.toDouble(), it.lng.toDouble())
                     mMap.addMarker(MarkerOptions().position(latlng).title(it.description + " " + it.date_))
                 }
+                val progress: ProgressBar = findViewById(R.id.progressBar_map)
+                progress.visibility = View.INVISIBLE
             }
 
             override fun onFailure(call: Call<List<Occurrence>>, t: Throwable) {

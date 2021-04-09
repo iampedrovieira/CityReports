@@ -123,7 +123,7 @@ class OccurrenceOpen : AppCompatActivity(),AdapterView.OnItemSelectedListener{
         val sharedPref:SharedPreferences = getSharedPreferences(getString(R.string.sp_login),Context.MODE_PRIVATE)
         val userid = sharedPref.getInt(getString(R.string.sp_userid_value),0)
 
-        val call = request.createOccurrence(description.toString(),userid,typeid,lat,lng)
+        val call = request.createOccurrence(description.text.toString(),userid,typeid,lat,lng)
         call.enqueue(object: Callback<OutPutOccurrence> {
             override fun onResponse(call: Call<OutPutOccurrence>, response: Response<OutPutOccurrence>) {
                 if (response.body()?.status!!){
