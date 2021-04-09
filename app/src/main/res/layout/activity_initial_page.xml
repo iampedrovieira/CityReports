@@ -51,6 +51,15 @@
             android:orientation="horizontal"
             app:layout_constraintGuide_begin="20dp" />
 
+        <ProgressBar
+            android:id="@+id/progressBar_map"
+            style="@android:style/Widget.ProgressBar"
+            android:layout_width="38dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="187dp"
+            android:layout_marginLeft="187dp"
+            android:layout_marginTop="300dp" />
+
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -23,4 +23,5 @@
     <string name="Description">Descrição</string>
     <string name="take_photo">Tire uma foto</string>
     <string name="update_local">Atualizar localização</string>
+    <string name="type">Tipo</string>
 </resources>

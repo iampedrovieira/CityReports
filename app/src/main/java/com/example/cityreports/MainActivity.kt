@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.EditText
+import android.widget.ProgressBar
 import android.widget.Toast
 import com.example.cityreports.api.EndPoints
 import com.example.cityreports.api.OutPutLogin
@@ -20,10 +21,13 @@ import kotlin.math.log
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         val sharedPref:SharedPreferences = getSharedPreferences(getString(R.string.sp_login),Context.MODE_PRIVATE)
         val loginValue = sharedPref.getBoolean(getString(R.string.sp_login_value),false)
+        val progress:ProgressBar = findViewById(R.id.progressBar_Login)
+        progress.visibility = View.INVISIBLE
         if(loginValue){
             val intent = Intent(this,Initial_page::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
@@ -39,6 +43,8 @@ class MainActivity : AppCompatActivity() {
         val intent = Intent(this,Initial_page::class.java)
         var username:EditText = findViewById(R.id.editTextTextEmailAddress3)
         var password:EditText = findViewById(R.id.editTextTextPassword3)
+        val progress:ProgressBar = findViewById(R.id.progressBar_Login)
+        progress.visibility = View.VISIBLE
         val call = request.verifyLogin(username.text.toString(),password.text.toString())
 
         call.enqueue(object: Callback<OutPutLogin> {
@@ -47,9 +53,11 @@ class MainActivity : AppCompatActivity() {
                 if(response.isSuccessful ){
                     val user:OutPutLogin = response.body()!!
                         if(user.userid !="-1"){
+                            progress.visibility = View.INVISIBLE
                             val sharedPref:SharedPreferences = getSharedPreferences(getString(R.string.sp_login),Context.MODE_PRIVATE)
                             with(sharedPref.edit()){
                                 putBoolean(getString(R.string.sp_login_value),true)
+                                putInt(getString(R.string.sp_userid_value),user.userid.toInt())
                                 commit()
                             }
                             //Toast.makeText(applicationContext, "${R.string.welcome.to} ${user.name} " , Toast.LENGTH_LONG).show()
@@ -57,6 +65,7 @@ class MainActivity : AppCompatActivity() {
                             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                             startActivity(intent)
                         }else{
+                            progress.visibility = View.INVISIBLE
                             Toast.makeText(applicationContext, R.string.login_fail , Toast.LENGTH_LONG).show()
                         }
                 }

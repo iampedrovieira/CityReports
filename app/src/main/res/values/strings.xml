@@ -18,6 +18,7 @@
     <string name="note">Note</string>
     <string name="sp_login">sp_login</string>
     <string name="sp_login_value">sp_login_value</string>
+    <string name="sp_userid_value">sp_userid_value</string>
     <string name="note_deleted">Note deleted</string>
     <string name="note_saved">Note saved</string>
     <string name="login_fail">username or password invalid</string>
@@ -26,4 +27,10 @@
     <string name="Description">Description</string>
     <string name="take_photo">Take a photo</string>
     <string name="update_local">Update localization</string>
+    <string-array name="type_array">
+        <item>Transito</item>
+        <item>Buraco na via</item>
+    </string-array>
+    <string name="type">Type</string>
+
 </resources>
