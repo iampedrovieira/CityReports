@@ -1,14 +1,21 @@
 package com.example.cityreports
 
 import android.Manifest
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.location.Location
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.example.cityreports.api.EndPoints
+import com.example.cityreports.api.Occurrence
+import com.example.cityreports.api.OutPutLogin
+import com.example.cityreports.api.ServiceBuilder
 
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -17,6 +24,9 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomappbar.BottomAppBar
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class Initial_page : AppCompatActivity(), OnMapReadyCallback {
 
@@ -26,6 +36,8 @@ class Initial_page : AppCompatActivity(), OnMapReadyCallback {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_initial_page)
+        val progress: ProgressBar = findViewById(R.id.progressBar_map)
+        progress.visibility = View.VISIBLE
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         val mapFragment = supportFragmentManager
                 .findFragmentById(R.id.map) as SupportMapFragment
@@ -38,8 +50,32 @@ class Initial_page : AppCompatActivity(), OnMapReadyCallback {
         }
         val addButton: View = findViewById(R.id.addButton)
         addButton.setOnClickListener { view ->
-            Toast.makeText(applicationContext, "Adicionar", Toast.LENGTH_LONG).show()
+            val intent = Intent(this,OccurrenceOpen::class.java)
+            startActivity(intent)
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val request = ServiceBuilder.buildService(EndPoints::class.java)
+        val progress: ProgressBar = findViewById(R.id.progressBar_map)
+        progress.visibility = View.VISIBLE
+        val call = request.getAllOccurrences()
+        call.enqueue(object: Callback<List<Occurrence>>{
+            override fun onResponse(call: Call<List<Occurrence>>, response: Response<List<Occurrence>>) {
+                mMap.clear()
+                response.body()?.forEach {
+                    val latlng = LatLng(it.lat.toDouble(), it.lng.toDouble())
+                    mMap.addMarker(MarkerOptions().position(latlng).title(it.description + " " + it.date_))
+                }
+                progress.visibility = View.INVISIBLE
+            }
+
+            override fun onFailure(call: Call<List<Occurrence>>, t: Throwable) {
+                Toast.makeText(applicationContext, t.message, Toast.LENGTH_LONG).show()
+            }
+
+        })
     }
 
     /**
@@ -54,13 +90,34 @@ class Initial_page : AppCompatActivity(), OnMapReadyCallback {
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
         getLocationAccess()
-        /*// Add a marker in Sydney and move the camera
-        val sydney = LatLng(-34.0, 151.0)
-        mMap.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"))
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
-        */
-    }
+        mMap.setOnMarkerClickListener { marker ->
+            if (marker.isInfoWindowShown) {
+                marker.hideInfoWindow()
+            } else {
+                marker.showInfoWindow()
+            }
+            true
+        }
+        // Create markers from db
+        val request = ServiceBuilder.buildService(EndPoints::class.java)
 
+        val call = request.getAllOccurrences()
+        call.enqueue(object: Callback<List<Occurrence>>{
+            override fun onResponse(call: Call<List<Occurrence>>, response: Response<List<Occurrence>>) {
+                response.body()?.forEach {
+                    val latlng = LatLng(it.lat.toDouble(), it.lng.toDouble())
+                    mMap.addMarker(MarkerOptions().position(latlng).title(it.description + " " + it.date_))
+                }
+                val progress: ProgressBar = findViewById(R.id.progressBar_map)
+                progress.visibility = View.INVISIBLE
+            }
+
+            override fun onFailure(call: Call<List<Occurrence>>, t: Throwable) {
+                Toast.makeText(applicationContext, t.message, Toast.LENGTH_LONG).show()
+            }
+
+        })
+    }
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         if (requestCode == LOCATIONPERMISSIONREQUEST) {
             if (grantResults.contains(PackageManager.PERMISSION_GRANTED)) {
@@ -88,9 +145,6 @@ class Initial_page : AppCompatActivity(), OnMapReadyCallback {
                 finish()
             }
         }
-    }
-    fun addButton(view: View){
-        Toast.makeText(applicationContext, "addicionar", Toast.LENGTH_LONG).show()
     }
     private fun getLocationAccess() {
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
