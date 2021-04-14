@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.Context
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
+import android.location.Geocoder
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
@@ -40,6 +41,7 @@ class OccurrenceOpen : AppCompatActivity(),AdapterView.OnItemSelectedListener{
     private var lat:Double = 0.0
     private var lng:Double = 0.0
     private var typeid:Int =1
+    private var new:Boolean=true
     private lateinit var date_:String
     private lateinit var img:String
     lateinit var spinner:Spinner
@@ -53,11 +55,27 @@ class OccurrenceOpen : AppCompatActivity(),AdapterView.OnItemSelectedListener{
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setTitle(R.string.ocurrences)
         description= findViewById(R.id.textAreaOccurrence)
-        textPhoto= findViewById(R.id.textPhoto)
         textLocalization= findViewById(R.id.textViewLocalization)
 
-        spinner= findViewById(R.id.spinner_type)
+        //get data from past Activity
+        val data:Bundle?=intent.extras
+        if(data!=null){
+            new = data.getBoolean("new")
+            if(!new){
+                //Caso seja para editar
+            }else{
+                updateLocalization()
+            }
 
+        }
+
+        if(lat==0.0 || lng == 0.0){
+
+        }else{
+            val address = getAdress()
+            textLocalization.text = address
+        }
+        spinner= findViewById(R.id.spinner_type)
         spinner.onItemSelectedListener = this
         ArrayAdapter.createFromResource(this,R.array.type_array,android.R.layout.simple_spinner_item).also {
             adapter ->
@@ -97,6 +115,9 @@ class OccurrenceOpen : AppCompatActivity(),AdapterView.OnItemSelectedListener{
         //Tirar photo e gravar a mesma
     }
     fun onClickLocalization(view:View){
+        updateLocalization()
+    }
+    private fun updateLocalization(){
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
@@ -113,6 +134,11 @@ class OccurrenceOpen : AppCompatActivity(),AdapterView.OnItemSelectedListener{
                     if (location != null) {
                         lat = location.latitude
                         lng = location.longitude
+                        Log.v("bbbbbbbb","DD")
+                        val address = getAdress()
+                        textLocalization.text= address
+                    }else{
+                        Toast.makeText(applicationContext, R.string.enable_gps , Toast.LENGTH_LONG).show()
                     }
                 }
     }
@@ -134,5 +160,16 @@ class OccurrenceOpen : AppCompatActivity(),AdapterView.OnItemSelectedListener{
                 Toast.makeText(applicationContext, t.message , Toast.LENGTH_LONG).show()
             }
         })
+    }
+
+    private fun getAdress():String{
+        val geocoder = Geocoder(this)
+        val list = geocoder.getFromLocation(lat,lng,1)
+        if(list.size>0){
+            return list[0].getAddressLine(0)
+        }else{
+            return getString(R.string.try_again)
+        }
+
     }
 }

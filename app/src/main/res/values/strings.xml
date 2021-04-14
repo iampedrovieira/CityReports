@@ -32,5 +32,7 @@
         <item>Buraco na via</item>
     </string-array>
     <string name="type">Type</string>
+    <string name="enable_gps">Enable gps</string>
+    <string name="try_again">Try again</string>
 
 </resources>
