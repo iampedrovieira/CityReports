@@ -18,7 +18,7 @@ interface EndPoints {
 
     @FormUrlEncoded
     @POST("create-occurrences")
-    fun createOccurrence(@Field("description") description: String, @Field("userid") userid: Int,
+    fun createOccurrence(@Field("image") image: String,@Field("description") description: String, @Field("userid") userid: Int,
                          @Field("typeid") typeid:Int,
                          @Field("lat") lat:Double, @Field("lng") lng:Double): Call<OutPutOccurrence>
 }
