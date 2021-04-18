@@ -16,6 +16,7 @@ import com.example.cityreports.api.EndPoints
 import com.example.cityreports.api.Occurrence
 import com.example.cityreports.api.OutPutLogin
 import com.example.cityreports.api.ServiceBuilder
+import com.google.android.gms.location.FusedLocationProviderClient
 
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -51,6 +52,7 @@ class Initial_page : AppCompatActivity(), OnMapReadyCallback {
         val addButton: View = findViewById(R.id.addButton)
         addButton.setOnClickListener { view ->
             val intent = Intent(this,OccurrenceOpen::class.java)
+            intent.putExtra("new",true)
             startActivity(intent)
         }
     }
