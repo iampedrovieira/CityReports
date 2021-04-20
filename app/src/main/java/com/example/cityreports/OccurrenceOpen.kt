@@ -23,6 +23,7 @@ import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.core.text.set
 import com.example.cityreports.api.EndPoints
 import com.example.cityreports.api.OutPutOccurrence
 import com.example.cityreports.api.ServiceBuilder
@@ -42,7 +43,8 @@ class OccurrenceOpen : AppCompatActivity(),AdapterView.OnItemSelectedListener{
     private lateinit var imageView:ImageView
     private var lat:Double = 0.0
     private var lng:Double = 0.0
-    private var typeid:Int =1
+    private var typeid:Int = 1
+    private var occurence_id:Int = -1
     private var new:Boolean=true
     private lateinit var date_:String
     private lateinit var img:String
@@ -67,10 +69,17 @@ class OccurrenceOpen : AppCompatActivity(),AdapterView.OnItemSelectedListener{
         if(data!=null){
             new = data.getBoolean("new")
             if(!new){
+                occurence_id = data.getInt("occurrenceid")
+                description.setText(data.getString("description"))
+                typeid = data.getInt("typeid")
+                lat= data.getDouble("lat")
+                lng= data.getDouble("lng")
 
 
-                //Caso seja para editar
+                //Falta ir buscar a img
+
             }else{
+                //Atualiza a localização
                 updateLocalization()
             }
 
@@ -79,8 +88,13 @@ class OccurrenceOpen : AppCompatActivity(),AdapterView.OnItemSelectedListener{
         if(lat==0.0 || lng == 0.0){
 
         }else{
+            Log.v("aaaaaaaaaaa",lat.toString())
+            Log.v("aaaaaaaaaaa",lng.toString())
             val address = getAdress()
+            Log.v("aaaaaaaaaaa",address)
+
             textLocalization.text = address
+
         }
         spinner= findViewById(R.id.spinner_type)
         spinner.onItemSelectedListener = this
@@ -90,8 +104,7 @@ class OccurrenceOpen : AppCompatActivity(),AdapterView.OnItemSelectedListener{
             // Apply the adapter to the spinner
             spinner.adapter = adapter
         }
-
-        spinner.setSelection(typeid)
+        spinner.setSelection(typeid-1)
     }
     override fun onItemSelected(parent: AdapterView<*>, view: View?, pos: Int, id: Long) {
         typeid=pos+1
@@ -154,7 +167,7 @@ class OccurrenceOpen : AppCompatActivity(),AdapterView.OnItemSelectedListener{
                     if (location != null) {
                         lat = location.latitude
                         lng = location.longitude
-                        Log.v("bbbbbbbb","DD")
+
                         val address = getAdress()
                         textLocalization.text= address
                     }else{

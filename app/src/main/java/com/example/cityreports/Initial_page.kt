@@ -178,16 +178,14 @@ class Initial_page : AppCompatActivity(), OnMapReadyCallback {
         val m_user_id = data_marker["userid"]
         val intent = Intent(this,OccurrenceOpen::class.java)
         intent.putExtra("new",false)
-                .putExtra("lat",data_marker["userid"].toString().toInt())
-                .putExtra("lat",data_marker["occurrenceid"].toString().toInt())
-                .putExtra("lat",data_marker["typeid"].toString().toInt())
+                .putExtra("userid",data_marker["userid"].toString().toInt())
+                .putExtra("occurrenceid",data_marker["occurrenceid"].toString().toInt())
+                .putExtra("typeid",data_marker["typeid"].toString().toInt())
+                .putExtra("description",data_marker["description"].toString())
                 .putExtra("lat",data_marker["lat"].toString().toDouble())
-                .putExtra("lat",data_marker["lng"].toString().toDouble())
+                .putExtra("lng",data_marker["lng"].toString().toDouble())
         startActivity(intent)
-        if (m_user_id == user_id){
-            //Open new intent
-            Log.v("aaaaaaaaaaaaaa",data_marker["userid"].toString())
-        }
+
 
     }
 }
