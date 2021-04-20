@@ -67,6 +67,8 @@ class OccurrenceOpen : AppCompatActivity(),AdapterView.OnItemSelectedListener{
         if(data!=null){
             new = data.getBoolean("new")
             if(!new){
+
+
                 //Caso seja para editar
             }else{
                 updateLocalization()

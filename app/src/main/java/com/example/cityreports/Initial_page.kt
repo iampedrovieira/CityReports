@@ -3,10 +3,12 @@ package com.example.cityreports
 import android.Manifest
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.location.Location
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.ProgressBar
 import android.widget.Toast
@@ -23,6 +25,7 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomappbar.BottomAppBar
 import retrofit2.Call
@@ -68,7 +71,10 @@ class Initial_page : AppCompatActivity(), OnMapReadyCallback {
                 mMap.clear()
                 response.body()?.forEach {
                     val latlng = LatLng(it.lat.toDouble(), it.lng.toDouble())
-                    mMap.addMarker(MarkerOptions().position(latlng).title(it.description + " " + it.date_))
+                    val new_marker:Marker = mMap.addMarker(MarkerOptions().position(latlng).title(it.description + " " + it.date_))
+                    new_marker.tag = mapOf("occurrenceid" to it.occurrenceid,
+                            "userid" to it.userid, "typeid" to it.typeid,"description" to it.description,
+                            "lat" to it.lat , "lng" to it.lng)
                 }
                 progress.visibility = View.INVISIBLE
             }
@@ -100,6 +106,10 @@ class Initial_page : AppCompatActivity(), OnMapReadyCallback {
             }
             true
         }
+
+        mMap.setOnInfoWindowClickListener { marker ->
+            onMarkerClick(marker)
+        }
         // Create markers from db
         val request = ServiceBuilder.buildService(EndPoints::class.java)
 
@@ -108,7 +118,12 @@ class Initial_page : AppCompatActivity(), OnMapReadyCallback {
             override fun onResponse(call: Call<List<Occurrence>>, response: Response<List<Occurrence>>) {
                 response.body()?.forEach {
                     val latlng = LatLng(it.lat.toDouble(), it.lng.toDouble())
-                    mMap.addMarker(MarkerOptions().position(latlng).title(it.description + " " + it.date_))
+                    it.occurrenceid
+
+                    val new_marker:Marker = mMap.addMarker(MarkerOptions().position(latlng).title(it.description + " " + it.date_))
+                    new_marker.tag = mapOf("occurrenceid" to it.occurrenceid,
+                            "userid" to it.userid, "typeid" to it.typeid,"description" to it.description,
+                            "lat" to it.lat , "lng" to it.lng)
                 }
                 val progress: ProgressBar = findViewById(R.id.progressBar_map)
                 progress.visibility = View.INVISIBLE
@@ -155,4 +170,25 @@ class Initial_page : AppCompatActivity(), OnMapReadyCallback {
         else
             ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION), LOCATIONPERMISSIONREQUEST)
     }
+    private fun onMarkerClick(marker: Marker) {
+        val data_marker = marker.tag as Map<*, *>
+
+        val sharedPref: SharedPreferences = getSharedPreferences(getString(R.string.sp_login),Context.MODE_PRIVATE)
+        val user_id:Int = sharedPref.getInt(getString(R.string.sp_userid_value),0)
+        val m_user_id = data_marker["userid"]
+        val intent = Intent(this,OccurrenceOpen::class.java)
+        intent.putExtra("new",false)
+                .putExtra("lat",data_marker["userid"].toString().toInt())
+                .putExtra("lat",data_marker["occurrenceid"].toString().toInt())
+                .putExtra("lat",data_marker["typeid"].toString().toInt())
+                .putExtra("lat",data_marker["lat"].toString().toDouble())
+                .putExtra("lat",data_marker["lng"].toString().toDouble())
+        startActivity(intent)
+        if (m_user_id == user_id){
+            //Open new intent
+            Log.v("aaaaaaaaaaaaaa",data_marker["userid"].toString())
+        }
+
+    }
 }
+
