@@ -1,17 +1,17 @@
 package com.example.cityreports.api
 
 import android.text.Editable
+import okhttp3.Response
+import okhttp3.ResponseBody
 import retrofit2.Call
-import retrofit2.http.Field
-import retrofit2.http.FormUrlEncoded
-import retrofit2.http.GET
-import retrofit2.http.POST
+import retrofit2.http.*
 
 interface EndPoints {
 
     @GET("alloccurrences")
     fun getAllOccurrences():Call<List<Occurrence>>
-
+    @GET("img/{id}.png")
+    fun getImg(@Path("id") id:Int):Call<ResponseBody>
     @FormUrlEncoded
     @POST("login")
     fun verifyLogin(@Field("username")username:String,@Field("pass")password:String): Call<OutPutLogin>

@@ -25,10 +25,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.text.set
 import com.example.cityreports.api.EndPoints
+import com.example.cityreports.api.Occurrence
 import com.example.cityreports.api.OutPutOccurrence
 import com.example.cityreports.api.ServiceBuilder
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -74,7 +76,22 @@ class OccurrenceOpen : AppCompatActivity(),AdapterView.OnItemSelectedListener{
                 typeid = data.getInt("typeid")
                 lat= data.getDouble("lat")
                 lng= data.getDouble("lng")
+                val request = ServiceBuilder.buildService(EndPoints::class.java)
+                val call = request.getImg(occurence_id)
 
+                call.enqueue(object: Callback<ResponseBody>{
+                    override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+
+                        imageBitmap = BitmapFactory.decodeStream(response.body()?.byteStream())
+                        imageView.setImageBitmap(imageBitmap)
+                    }
+                    override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                        TODO("Not yet implemented")
+                    }
+
+
+                })
+                var img_url = ""
 
                 //Falta ir buscar a img
 
@@ -88,10 +105,9 @@ class OccurrenceOpen : AppCompatActivity(),AdapterView.OnItemSelectedListener{
         if(lat==0.0 || lng == 0.0){
 
         }else{
-            Log.v("aaaaaaaaaaa",lat.toString())
-            Log.v("aaaaaaaaaaa",lng.toString())
+
             val address = getAdress()
-            Log.v("aaaaaaaaaaa",address)
+
 
             textLocalization.text = address
 
