@@ -88,13 +88,7 @@ class OccurrenceOpen : AppCompatActivity(),AdapterView.OnItemSelectedListener{
                     override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                         TODO("Not yet implemented")
                     }
-
-
                 })
-                var img_url = ""
-
-                //Falta ir buscar a img
-
             }else{
                 //Atualiza a localização
                 updateLocalization()
@@ -124,7 +118,6 @@ class OccurrenceOpen : AppCompatActivity(),AdapterView.OnItemSelectedListener{
     }
     override fun onItemSelected(parent: AdapterView<*>, view: View?, pos: Int, id: Long) {
         typeid=pos+1
-
     }
 
     override fun onNothingSelected(parent: AdapterView<*>) {
@@ -195,39 +188,52 @@ class OccurrenceOpen : AppCompatActivity(),AdapterView.OnItemSelectedListener{
     fun onClickSave(view: View){
 
         // Create markers on db
+        if(description.text.toString()!=""){
 
-        if(description.text.toString()==""){
-
+            val request = ServiceBuilder.buildService(EndPoints::class.java)
+            val sharedPref:SharedPreferences = getSharedPreferences(getString(R.string.sp_login),Context.MODE_PRIVATE)
+            val userid = sharedPref.getInt(getString(R.string.sp_userid_value),0)
+            var bao = ByteArrayOutputStream()
+            imageBitmap.compress(Bitmap.CompressFormat.PNG,100,bao)
+            val stringImg:String = Base64.getEncoder().encodeToString(bao.toByteArray())
             if(new){
-                return
-            }else{
-                //Delete
-            }
-        }
 
-        val request = ServiceBuilder.buildService(EndPoints::class.java)
-        val sharedPref:SharedPreferences = getSharedPreferences(getString(R.string.sp_login),Context.MODE_PRIVATE)
-        val userid = sharedPref.getInt(getString(R.string.sp_userid_value),0)
-        var bao = ByteArrayOutputStream()
-        imageBitmap.compress(Bitmap.CompressFormat.PNG,100,bao)
-        val stringImg:String = Base64.getEncoder().encodeToString(bao.toByteArray())
+                val call = request.createOccurrence(stringImg,description.text.toString(),userid,typeid,lat,lng)
+                call.enqueue(object: Callback<OutPutOccurrence> {
+                    override fun onResponse(call: Call<OutPutOccurrence>, response: Response<OutPutOccurrence>) {
 
-        if(new){
-            val call = request.createOccurrence(stringImg,description.text.toString(),userid,typeid,lat,lng)
-            call.enqueue(object: Callback<OutPutOccurrence> {
-                override fun onResponse(call: Call<OutPutOccurrence>, response: Response<OutPutOccurrence>) {
-                    if (response.body()?.status!!){
 
-                        finish()
+                        if (response.body()?.status!!){
+
+                            finish()
+                        }
                     }
-                }
-                override fun onFailure(call: Call<OutPutOccurrence>, t: Throwable) {
-                    Toast.makeText(applicationContext, t.message , Toast.LENGTH_LONG).show()
-                }
-            })
+                    override fun onFailure(call: Call<OutPutOccurrence>, t: Throwable) {
+                        Toast.makeText(applicationContext, t.message , Toast.LENGTH_LONG).show()
+                    }
+                })
+            }else{
+                //Edit
+                val call = request.editOccurrence(occurence_id,stringImg,description.text.toString(),userid,typeid,lat,lng)
+                call.enqueue(object: Callback<OutPutOccurrence> {
+                    override fun onResponse(call: Call<OutPutOccurrence>, response: Response<OutPutOccurrence>) {
+
+
+                        if (response.body()?.status!!){
+
+                            finish()
+                        }
+                    }
+                    override fun onFailure(call: Call<OutPutOccurrence>, t: Throwable) {
+                        Toast.makeText(applicationContext, t.message , Toast.LENGTH_LONG).show()
+                    }
+                })
+            }
         }else{
-            //Edit
+            // Toast a dizer que tem de ter descrição.
         }
+
+
 
     }
 

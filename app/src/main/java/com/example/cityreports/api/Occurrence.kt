@@ -1,12 +1,12 @@
 package com.example.cityreports.api
 
 data class Occurrence(
-    val occurrenceid:String,
+    val id:String,
     val description:String,
     val lat:String,
     val lng:String,
     val img:String,
-    val typeid:String,
-    val userid:String,
+    val occurenceType_id:String,
+    val users_id:String,
     val date_:String
 )

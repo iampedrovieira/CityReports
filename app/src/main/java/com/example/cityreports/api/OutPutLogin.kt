@@ -1,6 +1,6 @@
 package com.example.cityreports.api
 
 data class OutPutLogin (
-    val userid:String,
+    val id:String,
     val name:String
 )

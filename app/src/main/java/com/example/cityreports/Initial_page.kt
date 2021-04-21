@@ -72,8 +72,8 @@ class Initial_page : AppCompatActivity(), OnMapReadyCallback {
                 response.body()?.forEach {
                     val latlng = LatLng(it.lat.toDouble(), it.lng.toDouble())
                     val new_marker:Marker = mMap.addMarker(MarkerOptions().position(latlng).title(it.description + " " + it.date_))
-                    new_marker.tag = mapOf("occurrenceid" to it.occurrenceid,
-                            "userid" to it.userid, "typeid" to it.typeid,"description" to it.description,
+                    new_marker.tag = mapOf("occurrenceid" to it.id,
+                            "userid" to it.users_id, "typeid" to it.occurenceType_id,"description" to it.description,
                             "lat" to it.lat , "lng" to it.lng)
                 }
                 progress.visibility = View.INVISIBLE
@@ -118,11 +118,11 @@ class Initial_page : AppCompatActivity(), OnMapReadyCallback {
             override fun onResponse(call: Call<List<Occurrence>>, response: Response<List<Occurrence>>) {
                 response.body()?.forEach {
                     val latlng = LatLng(it.lat.toDouble(), it.lng.toDouble())
-                    it.occurrenceid
+                    it.id
 
                     val new_marker:Marker = mMap.addMarker(MarkerOptions().position(latlng).title(it.description + " " + it.date_))
-                    new_marker.tag = mapOf("occurrenceid" to it.occurrenceid,
-                            "userid" to it.userid, "typeid" to it.typeid,"description" to it.description,
+                    new_marker.tag = mapOf("occurrenceid" to it.id,
+                            "userid" to it.users_id, "typeid" to it.occurenceType_id,"description" to it.description,
                             "lat" to it.lat , "lng" to it.lng)
                 }
                 val progress: ProgressBar = findViewById(R.id.progressBar_map)
@@ -176,17 +176,18 @@ class Initial_page : AppCompatActivity(), OnMapReadyCallback {
         val sharedPref: SharedPreferences = getSharedPreferences(getString(R.string.sp_login),Context.MODE_PRIVATE)
         val user_id:Int = sharedPref.getInt(getString(R.string.sp_userid_value),0)
         val m_user_id = data_marker["userid"]
-        val intent = Intent(this,OccurrenceOpen::class.java)
-        intent.putExtra("new",false)
-                .putExtra("userid",data_marker["userid"].toString().toInt())
-                .putExtra("occurrenceid",data_marker["occurrenceid"].toString().toInt())
-                .putExtra("typeid",data_marker["typeid"].toString().toInt())
-                .putExtra("description",data_marker["description"].toString())
-                .putExtra("lat",data_marker["lat"].toString().toDouble())
-                .putExtra("lng",data_marker["lng"].toString().toDouble())
-        startActivity(intent)
+        if(user_id == m_user_id.toString().toInt()){
 
-
+            val intent = Intent(this,OccurrenceOpen::class.java)
+            intent.putExtra("new",false)
+                    .putExtra("userid",data_marker["userid"].toString().toInt())
+                    .putExtra("occurrenceid",data_marker["occurrenceid"].toString().toInt())
+                    .putExtra("typeid",data_marker["typeid"].toString().toInt())
+                    .putExtra("description",data_marker["description"].toString())
+                    .putExtra("lat",data_marker["lat"].toString().toDouble())
+                    .putExtra("lng",data_marker["lng"].toString().toDouble())
+            startActivity(intent)
+        }
     }
 }
 
