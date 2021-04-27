@@ -12,6 +12,8 @@ interface EndPoints {
     fun getAllOccurrences():Call<List<Occurrence>>
     @GET("img/{id}.png")
     fun getImg(@Path("id") id:Int):Call<ResponseBody>
+    @POST("delete-occurrence/{id}")
+    fun deleteOccurrence(@Path("id") id:Int):Call<OutPutOccurrence>
     @FormUrlEncoded
     @POST("login")
     fun verifyLogin(@Field("username")username:String,@Field("pass")password:String): Call<OutPutLogin>

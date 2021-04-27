@@ -49,7 +49,6 @@ class OccurrenceOpen : AppCompatActivity(),AdapterView.OnItemSelectedListener{
     private var occurence_id:Int = -1
     private var new:Boolean=true
     private lateinit var date_:String
-    private lateinit var img:String
     lateinit var spinner:Spinner
     val REQUEST_IMAGE_CAPTURE = 1
     private lateinit var  imageBitmap: Bitmap
@@ -131,11 +130,27 @@ class OccurrenceOpen : AppCompatActivity(),AdapterView.OnItemSelectedListener{
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if(item.itemId == android.R.id.home){
+
+            //Verifcar se tem descrição vazia e se alterou
+            //Criar variave boolean e se alterar alto da true
             finish()
 
         }
         if(item.itemId == R.id.Delete){
-            finish()
+            val request = ServiceBuilder.buildService(EndPoints::class.java)
+            val call = request.deleteOccurrence(occurence_id)
+
+            call.enqueue(object: Callback<OutPutOccurrence>{
+                override fun onResponse(call: Call<OutPutOccurrence>, response: Response<OutPutOccurrence>) {
+                    //TOASTE HERE
+                    finish()
+                }
+                override fun onFailure(call: Call<OutPutOccurrence>, t: Throwable) {
+                    Toast.makeText(applicationContext, t.message , Toast.LENGTH_LONG).show()
+                }
+            })
+
+
         }
         return super.onOptionsItemSelected(item)
     }
