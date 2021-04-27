@@ -18,7 +18,7 @@ import com.example.cityreports.api.EndPoints
 import com.example.cityreports.api.Occurrence
 import com.example.cityreports.api.OutPutLogin
 import com.example.cityreports.api.ServiceBuilder
-import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.*
 
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -36,7 +36,13 @@ class Initial_page : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var mMap: GoogleMap
     private val LOCATIONPERMISSIONREQUEST = 1
-
+    private var actual_lat=0.0
+    private  var actual_lng=0.0
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private val LOCATION_PERMISSION_REQUEST_CODE = 1
+    private lateinit var lastLocation: Location
+    private lateinit var locationCallback: LocationCallback
+    private lateinit var locationRequest: LocationRequest
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_initial_page)
@@ -56,12 +62,31 @@ class Initial_page : AppCompatActivity(), OnMapReadyCallback {
         addButton.setOnClickListener { view ->
             val intent = Intent(this,OccurrenceOpen::class.java)
             intent.putExtra("new",true)
+                .putExtra("lat",actual_lat)
+                    .putExtra("lng",actual_lng)
             startActivity(intent)
         }
-    }
 
+        // Real time Location update
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        locationCallback = object : LocationCallback() {
+            override fun onLocationResult(p0: LocationResult) {
+                super.onLocationResult(p0)
+                actual_lat = p0.lastLocation.latitude
+                actual_lng = p0.lastLocation.longitude
+            }
+        }
+
+        //Request location
+        createLocationRequest()
+    }
+    override fun onPause() {
+        super.onPause()
+        fusedLocationClient.removeLocationUpdates(locationCallback)
+    }
     override fun onResume() {
         super.onResume()
+        startLocationUpdates()
         val request = ServiceBuilder.buildService(EndPoints::class.java)
         val progress: ProgressBar = findViewById(R.id.progressBar_map)
         progress.visibility = View.VISIBLE
@@ -84,6 +109,26 @@ class Initial_page : AppCompatActivity(), OnMapReadyCallback {
             }
 
         })
+    }
+    private fun createLocationRequest(){
+        locationRequest = LocationRequest()
+        locationRequest.interval=10000
+        locationRequest.priority= LocationRequest.PRIORITY_HIGH_ACCURACY
+    }
+    private fun startLocationUpdates(){
+        if (ActivityCompat.checkSelfPermission(
+                        this,
+                        android.Manifest.permission.ACCESS_FINE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),
+                    LOCATION_PERMISSION_REQUEST_CODE
+            )
+            return
+        }
+        fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null)
     }
 
     /**

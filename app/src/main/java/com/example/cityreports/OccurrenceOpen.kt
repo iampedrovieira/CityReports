@@ -28,8 +28,8 @@ import com.example.cityreports.api.EndPoints
 import com.example.cityreports.api.Occurrence
 import com.example.cityreports.api.OutPutOccurrence
 import com.example.cityreports.api.ServiceBuilder
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.*
+import com.google.android.gms.maps.model.LatLng
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
@@ -48,12 +48,15 @@ class OccurrenceOpen : AppCompatActivity(),AdapterView.OnItemSelectedListener{
     private var typeid:Int = 1
     private var occurence_id:Int = -1
     private var new:Boolean=true
-    private lateinit var date_:String
     lateinit var spinner:Spinner
     val REQUEST_IMAGE_CAPTURE = 1
+    private val LOCATION_PERMISSION_REQUEST_CODE = 1
     private lateinit var  imageBitmap: Bitmap
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 
+    private lateinit var lastLocation: Location
+    private lateinit var locationCallback: LocationCallback
+    private lateinit var locationRequest: LocationRequest
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,7 +67,16 @@ class OccurrenceOpen : AppCompatActivity(),AdapterView.OnItemSelectedListener{
         description= findViewById(R.id.textAreaOccurrence)
         textLocalization= findViewById(R.id.textViewLocalization)
         imageView = findViewById(R.id.imageViewOccurrence)
-
+        // Real time Location update
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        locationCallback = object : LocationCallback() {
+            override fun onLocationResult(p0: LocationResult) {
+                super.onLocationResult(p0)
+                lastLocation = p0.lastLocation
+            }
+        }
+        //Request location
+        createLocationRequest()
         //get data from past Activity
         val data:Bundle?=intent.extras
         if(data!=null){
@@ -89,8 +101,8 @@ class OccurrenceOpen : AppCompatActivity(),AdapterView.OnItemSelectedListener{
                     }
                 })
             }else{
-                //Atualiza a localização
-                updateLocalization()
+                lat= data.getDouble("lat")
+                lng= data.getDouble("lng")
             }
 
         }
@@ -98,12 +110,8 @@ class OccurrenceOpen : AppCompatActivity(),AdapterView.OnItemSelectedListener{
         if(lat==0.0 || lng == 0.0){
 
         }else{
-
             val address = getAdress()
-
-
             textLocalization.text = address
-
         }
         spinner= findViewById(R.id.spinner_type)
         spinner.onItemSelectedListener = this
@@ -115,6 +123,37 @@ class OccurrenceOpen : AppCompatActivity(),AdapterView.OnItemSelectedListener{
         }
         spinner.setSelection(typeid-1)
     }
+
+    override fun onPause() {
+        super.onPause()
+        fusedLocationClient.removeLocationUpdates(locationCallback)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        startLocationUpdates()
+    }
+    private fun createLocationRequest(){
+        locationRequest = LocationRequest()
+        locationRequest.interval=10000
+        locationRequest.priority= LocationRequest.PRIORITY_HIGH_ACCURACY
+    }
+    private fun startLocationUpdates(){
+        if (ActivityCompat.checkSelfPermission(
+                        this,
+                        android.Manifest.permission.ACCESS_FINE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),
+                    LOCATION_PERMISSION_REQUEST_CODE
+            )
+            return
+        }
+        fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null)
+    }
+
     override fun onItemSelected(parent: AdapterView<*>, view: View?, pos: Int, id: Long) {
         typeid=pos+1
     }
@@ -175,29 +214,10 @@ class OccurrenceOpen : AppCompatActivity(),AdapterView.OnItemSelectedListener{
         updateLocalization()
     }
     private fun updateLocalization(){
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return
-        }
-        fusedLocationClient.lastLocation
-                .addOnSuccessListener { location : Location? ->
-                    if (location != null) {
-                        lat = location.latitude
-                        lng = location.longitude
-
-                        val address = getAdress()
-                        textLocalization.text= address
-                    }else{
-                        Toast.makeText(applicationContext, R.string.enable_gps , Toast.LENGTH_LONG).show()
-                    }
-                }
+        lat = lastLocation.latitude
+        lng = lastLocation.longitude
+        val address = getAdress()
+        textLocalization.text= address
     }
     @RequiresApi(Build.VERSION_CODES.O)
     fun onClickSave(view: View){
