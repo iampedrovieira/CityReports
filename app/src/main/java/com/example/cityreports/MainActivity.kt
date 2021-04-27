@@ -52,12 +52,12 @@ class MainActivity : AppCompatActivity() {
 
                 if(response.isSuccessful ){
                     val user:OutPutLogin = response.body()!!
-                        if(user.userid !="-1"){
+                        if(user.id !="-1"){
                             progress.visibility = View.INVISIBLE
                             val sharedPref:SharedPreferences = getSharedPreferences(getString(R.string.sp_login),Context.MODE_PRIVATE)
                             with(sharedPref.edit()){
                                 putBoolean(getString(R.string.sp_login_value),true)
-                                putInt(getString(R.string.sp_userid_value),user.userid.toInt())
+                                putInt(getString(R.string.sp_userid_value),user.id.toInt())
                                 commit()
                             }
                             //Toast.makeText(applicationContext, "${R.string.welcome.to} ${user.name} " , Toast.LENGTH_LONG).show()

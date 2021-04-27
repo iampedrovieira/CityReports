@@ -23,11 +23,14 @@ import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.core.text.set
 import com.example.cityreports.api.EndPoints
+import com.example.cityreports.api.Occurrence
 import com.example.cityreports.api.OutPutOccurrence
 import com.example.cityreports.api.ServiceBuilder
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -42,10 +45,10 @@ class OccurrenceOpen : AppCompatActivity(),AdapterView.OnItemSelectedListener{
     private lateinit var imageView:ImageView
     private var lat:Double = 0.0
     private var lng:Double = 0.0
-    private var typeid:Int =1
+    private var typeid:Int = 1
+    private var occurence_id:Int = -1
     private var new:Boolean=true
     private lateinit var date_:String
-    private lateinit var img:String
     lateinit var spinner:Spinner
     val REQUEST_IMAGE_CAPTURE = 1
     private lateinit var  imageBitmap: Bitmap
@@ -67,8 +70,26 @@ class OccurrenceOpen : AppCompatActivity(),AdapterView.OnItemSelectedListener{
         if(data!=null){
             new = data.getBoolean("new")
             if(!new){
-                //Caso seja para editar
+                occurence_id = data.getInt("occurrenceid")
+                description.setText(data.getString("description"))
+                typeid = data.getInt("typeid")
+                lat= data.getDouble("lat")
+                lng= data.getDouble("lng")
+                val request = ServiceBuilder.buildService(EndPoints::class.java)
+                val call = request.getImg(occurence_id)
+
+                call.enqueue(object: Callback<ResponseBody>{
+                    override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+
+                        imageBitmap = BitmapFactory.decodeStream(response.body()?.byteStream())
+                        imageView.setImageBitmap(imageBitmap)
+                    }
+                    override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                        TODO("Not yet implemented")
+                    }
+                })
             }else{
+                //Atualiza a localização
                 updateLocalization()
             }
 
@@ -77,8 +98,12 @@ class OccurrenceOpen : AppCompatActivity(),AdapterView.OnItemSelectedListener{
         if(lat==0.0 || lng == 0.0){
 
         }else{
+
             val address = getAdress()
+
+
             textLocalization.text = address
+
         }
         spinner= findViewById(R.id.spinner_type)
         spinner.onItemSelectedListener = this
@@ -88,12 +113,10 @@ class OccurrenceOpen : AppCompatActivity(),AdapterView.OnItemSelectedListener{
             // Apply the adapter to the spinner
             spinner.adapter = adapter
         }
-
-        spinner.setSelection(typeid)
+        spinner.setSelection(typeid-1)
     }
     override fun onItemSelected(parent: AdapterView<*>, view: View?, pos: Int, id: Long) {
         typeid=pos+1
-
     }
 
     override fun onNothingSelected(parent: AdapterView<*>) {
@@ -107,11 +130,27 @@ class OccurrenceOpen : AppCompatActivity(),AdapterView.OnItemSelectedListener{
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if(item.itemId == android.R.id.home){
+
+            //Verifcar se tem descrição vazia e se alterou
+            //Criar variave boolean e se alterar alto da true
             finish()
 
         }
         if(item.itemId == R.id.Delete){
-            finish()
+            val request = ServiceBuilder.buildService(EndPoints::class.java)
+            val call = request.deleteOccurrence(occurence_id)
+
+            call.enqueue(object: Callback<OutPutOccurrence>{
+                override fun onResponse(call: Call<OutPutOccurrence>, response: Response<OutPutOccurrence>) {
+                    //TOASTE HERE
+                    finish()
+                }
+                override fun onFailure(call: Call<OutPutOccurrence>, t: Throwable) {
+                    Toast.makeText(applicationContext, t.message , Toast.LENGTH_LONG).show()
+                }
+            })
+
+
         }
         return super.onOptionsItemSelected(item)
     }
@@ -152,7 +191,7 @@ class OccurrenceOpen : AppCompatActivity(),AdapterView.OnItemSelectedListener{
                     if (location != null) {
                         lat = location.latitude
                         lng = location.longitude
-                        Log.v("bbbbbbbb","DD")
+
                         val address = getAdress()
                         textLocalization.text= address
                     }else{
@@ -164,39 +203,52 @@ class OccurrenceOpen : AppCompatActivity(),AdapterView.OnItemSelectedListener{
     fun onClickSave(view: View){
 
         // Create markers on db
+        if(description.text.toString()!=""){
 
-        if(description.text.toString()==""){
-
+            val request = ServiceBuilder.buildService(EndPoints::class.java)
+            val sharedPref:SharedPreferences = getSharedPreferences(getString(R.string.sp_login),Context.MODE_PRIVATE)
+            val userid = sharedPref.getInt(getString(R.string.sp_userid_value),0)
+            var bao = ByteArrayOutputStream()
+            imageBitmap.compress(Bitmap.CompressFormat.PNG,100,bao)
+            val stringImg:String = Base64.getEncoder().encodeToString(bao.toByteArray())
             if(new){
-                return
-            }else{
-                //Delete
-            }
-        }
 
-        val request = ServiceBuilder.buildService(EndPoints::class.java)
-        val sharedPref:SharedPreferences = getSharedPreferences(getString(R.string.sp_login),Context.MODE_PRIVATE)
-        val userid = sharedPref.getInt(getString(R.string.sp_userid_value),0)
-        var bao = ByteArrayOutputStream()
-        imageBitmap.compress(Bitmap.CompressFormat.PNG,100,bao)
-        val stringImg:String = Base64.getEncoder().encodeToString(bao.toByteArray())
+                val call = request.createOccurrence(stringImg,description.text.toString(),userid,typeid,lat,lng)
+                call.enqueue(object: Callback<OutPutOccurrence> {
+                    override fun onResponse(call: Call<OutPutOccurrence>, response: Response<OutPutOccurrence>) {
 
-        if(new){
-            val call = request.createOccurrence(stringImg,description.text.toString(),userid,typeid,lat,lng)
-            call.enqueue(object: Callback<OutPutOccurrence> {
-                override fun onResponse(call: Call<OutPutOccurrence>, response: Response<OutPutOccurrence>) {
-                    if (response.body()?.status!!){
 
-                        finish()
+                        if (response.body()?.status!!){
+
+                            finish()
+                        }
                     }
-                }
-                override fun onFailure(call: Call<OutPutOccurrence>, t: Throwable) {
-                    Toast.makeText(applicationContext, t.message , Toast.LENGTH_LONG).show()
-                }
-            })
+                    override fun onFailure(call: Call<OutPutOccurrence>, t: Throwable) {
+                        Toast.makeText(applicationContext, t.message , Toast.LENGTH_LONG).show()
+                    }
+                })
+            }else{
+                //Edit
+                val call = request.editOccurrence(occurence_id,stringImg,description.text.toString(),userid,typeid,lat,lng)
+                call.enqueue(object: Callback<OutPutOccurrence> {
+                    override fun onResponse(call: Call<OutPutOccurrence>, response: Response<OutPutOccurrence>) {
+
+
+                        if (response.body()?.status!!){
+
+                            finish()
+                        }
+                    }
+                    override fun onFailure(call: Call<OutPutOccurrence>, t: Throwable) {
+                        Toast.makeText(applicationContext, t.message , Toast.LENGTH_LONG).show()
+                    }
+                })
+            }
         }else{
-            //Edit
+            // Toast a dizer que tem de ter descrição.
         }
+
+
 
     }
 
