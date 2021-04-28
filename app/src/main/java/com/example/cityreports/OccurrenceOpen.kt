@@ -170,8 +170,7 @@ class OccurrenceOpen : AppCompatActivity(),AdapterView.OnItemSelectedListener{
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if(item.itemId == android.R.id.home){
 
-            //Verifcar se tem descrição vazia e se alterou
-            //Criar variave boolean e se alterar alto da true
+            Toast.makeText(applicationContext, R.string.changes_not_saved , Toast.LENGTH_LONG).show()
             finish()
 
         }
@@ -181,7 +180,7 @@ class OccurrenceOpen : AppCompatActivity(),AdapterView.OnItemSelectedListener{
 
             call.enqueue(object: Callback<OutPutOccurrence>{
                 override fun onResponse(call: Call<OutPutOccurrence>, response: Response<OutPutOccurrence>) {
-                    //TOASTE HERE
+                    Toast.makeText(applicationContext, R.string.ocurrence_deleted , Toast.LENGTH_LONG).show()
                     finish()
                 }
                 override fun onFailure(call: Call<OutPutOccurrence>, t: Throwable) {
@@ -265,7 +264,7 @@ class OccurrenceOpen : AppCompatActivity(),AdapterView.OnItemSelectedListener{
                 })
             }
         }else{
-            // Toast a dizer que tem de ter descrição.
+            Toast.makeText(applicationContext, R.string.empy_fields , Toast.LENGTH_LONG).show()
         }
 
 
