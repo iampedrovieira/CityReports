@@ -36,5 +36,6 @@
     <string name="try_again">Try again</string>
     <string name="filter_km">filter</string>
     <string name="type_filter">Type Filter</string>
+    <string name="changes_not_saved">The changes were not saved</string>
 
 </resources>
