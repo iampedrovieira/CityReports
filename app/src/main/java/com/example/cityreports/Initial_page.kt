@@ -25,6 +25,7 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
@@ -37,6 +38,7 @@ import retrofit2.Response
 class Initial_page : AppCompatActivity(), OnMapReadyCallback, AdapterView.OnItemSelectedListener {
 
     private lateinit var mMap: GoogleMap
+    private var mapIsReady=false
     private val LOCATIONPERMISSIONREQUEST = 1
     private var actual_lat=0.0
     private  var actual_lng=0.0
@@ -74,6 +76,7 @@ class Initial_page : AppCompatActivity(), OnMapReadyCallback, AdapterView.OnItem
             intent.putExtra("new",true)
                 .putExtra("lat",actual_lat)
                     .putExtra("lng",actual_lng)
+
             startActivity(intent)
         }
 
@@ -131,29 +134,80 @@ class Initial_page : AppCompatActivity(), OnMapReadyCallback, AdapterView.OnItem
     override fun onResume() {
         super.onResume()
         startLocationUpdates()
-        val request = ServiceBuilder.buildService(EndPoints::class.java)
-        val progress: ProgressBar = findViewById(R.id.progressBar_map)
-        progress.visibility = View.VISIBLE
-        val call = request.getAllOccurrences()
-        call.enqueue(object: Callback<List<Occurrence>>{
-            override fun onResponse(call: Call<List<Occurrence>>, response: Response<List<Occurrence>>) {
-                mMap.clear()
-                response.body()?.forEach {
-                    val latlng = LatLng(it.lat.toDouble(), it.lng.toDouble())
-                    val new_marker:Marker = mMap.addMarker(MarkerOptions().position(latlng).title(it.description + " " + it.date_))
-                    new_marker.tag = mapOf("occurrenceid" to it.id,
-                            "userid" to it.users_id, "typeid" to it.occurenceType_id,"description" to it.description,
-                            "lat" to it.lat , "lng" to it.lng)
-                    marker_list.add(new_marker)
+        if(mapIsReady){
+            val progress: ProgressBar = findViewById(R.id.progressBar_map)
+            progress.visibility = View.VISIBLE
+            mMap.clear()
+            // Create markers from db
+            val request = ServiceBuilder.buildService(EndPoints::class.java)
+
+            val call = request.getAllOccurrences()
+            call.enqueue(object: Callback<List<Occurrence>>{
+                override fun onResponse(call: Call<List<Occurrence>>, response: Response<List<Occurrence>>) {
+                    response.body()?.forEach {
+                        val latlng = LatLng(it.lat.toDouble(), it.lng.toDouble())
+                        it.id
+                        var  new_marker:Marker
+                        val sharedPref: SharedPreferences = getSharedPreferences(getString(R.string.sp_login),Context.MODE_PRIVATE)
+                        val user_id:Int = sharedPref.getInt(getString(R.string.sp_userid_value),0)
+
+                        if(it.occurenceType_id.toInt() == 1){
+                            if(it.users_id.toString().toInt() == user_id){
+                                new_marker = mMap.addMarker(MarkerOptions().position(latlng).title(it.description + " " + it.date_)
+                                        .icon(BitmapDescriptorFactory.defaultMarker(216F)))
+                                new_marker.tag = mapOf("occurrenceid" to it.id,
+                                        "userid" to it.users_id, "typeid" to it.occurenceType_id,"description" to it.description,
+                                        "lat" to it.lat , "lng" to it.lng)
+
+                                marker_list.add(new_marker)
+                            }else{
+                                new_marker = mMap.addMarker(MarkerOptions().position(latlng).title(it.description + " " + it.date_)
+                                        .icon(BitmapDescriptorFactory.defaultMarker(212F)))
+                                new_marker.tag = mapOf("occurrenceid" to it.id,
+                                        "userid" to it.users_id, "typeid" to it.occurenceType_id,"description" to it.description,
+                                        "lat" to it.lat , "lng" to it.lng)
+
+                                marker_list.add(new_marker)
+                            }
+
+                        }
+                        if(it.occurenceType_id.toInt() == 2){
+                            if(it.users_id.toString().toInt() == user_id){
+                                new_marker = mMap.addMarker(MarkerOptions().position(latlng).title(it.description + " " + it.date_)
+                                        .icon(BitmapDescriptorFactory.defaultMarker(20F)))
+                                new_marker.tag = mapOf("occurrenceid" to it.id,
+                                        "userid" to it.users_id, "typeid" to it.occurenceType_id,"description" to it.description,
+                                        "lat" to it.lat , "lng" to it.lng)
+
+                                marker_list.add(new_marker)
+                            }else{
+                                new_marker = mMap.addMarker(MarkerOptions().position(latlng).title(it.description + " " + it.date_)
+                                        .icon(BitmapDescriptorFactory.defaultMarker(13F)))
+                                new_marker.tag = mapOf("occurrenceid" to it.id,
+                                        "userid" to it.users_id, "typeid" to it.occurenceType_id,"description" to it.description,
+                                        "lat" to it.lat , "lng" to it.lng)
+
+                                marker_list.add(new_marker)
+                            }
+                        }
+
+
+                    }
+                    val progress: ProgressBar = findViewById(R.id.progressBar_map)
+                    progress.visibility = View.INVISIBLE
                 }
-                progress.visibility = View.INVISIBLE
-            }
 
-            override fun onFailure(call: Call<List<Occurrence>>, t: Throwable) {
-                Toast.makeText(applicationContext, t.message, Toast.LENGTH_LONG).show()
-            }
+                override fun onFailure(call: Call<List<Occurrence>>, t: Throwable) {
+                    Toast.makeText(applicationContext, t.message, Toast.LENGTH_LONG).show()
+                    val progress: ProgressBar = findViewById(R.id.progressBar_map)
+                    progress.visibility = View.INVISIBLE
 
-        })
+                }
+
+            })
+        }
+
+
     }
     private fun createLocationRequest(){
         locationRequest = LocationRequest()
@@ -188,6 +242,7 @@ class Initial_page : AppCompatActivity(), OnMapReadyCallback, AdapterView.OnItem
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
         getLocationAccess()
+        mapIsReady=true
         mMap.setOnMarkerClickListener { marker ->
             if (marker.isInfoWindowShown) {
                 marker.hideInfoWindow()
@@ -209,13 +264,51 @@ class Initial_page : AppCompatActivity(), OnMapReadyCallback, AdapterView.OnItem
                 response.body()?.forEach {
                     val latlng = LatLng(it.lat.toDouble(), it.lng.toDouble())
                     it.id
+                    var  new_marker:Marker
+                    val sharedPref: SharedPreferences = getSharedPreferences(getString(R.string.sp_login),Context.MODE_PRIVATE)
+                    val user_id:Int = sharedPref.getInt(getString(R.string.sp_userid_value),0)
 
-                    val new_marker:Marker = mMap.addMarker(MarkerOptions().position(latlng).title(it.description + " " + it.date_))
-                    new_marker.tag = mapOf("occurrenceid" to it.id,
-                            "userid" to it.users_id, "typeid" to it.occurenceType_id,"description" to it.description,
-                            "lat" to it.lat , "lng" to it.lng)
+                    if(it.occurenceType_id.toInt() == 1){
+                        if(it.users_id.toString().toInt() == user_id){
+                            new_marker = mMap.addMarker(MarkerOptions().position(latlng).title(it.description + " " + it.date_)
+                                    .icon(BitmapDescriptorFactory.defaultMarker(216F)))
+                            new_marker.tag = mapOf("occurrenceid" to it.id,
+                                    "userid" to it.users_id, "typeid" to it.occurenceType_id,"description" to it.description,
+                                    "lat" to it.lat , "lng" to it.lng)
 
-                    marker_list.add(new_marker)
+                            marker_list.add(new_marker)
+                        }else{
+                            new_marker = mMap.addMarker(MarkerOptions().position(latlng).title(it.description + " " + it.date_)
+                                    .icon(BitmapDescriptorFactory.defaultMarker(212F)))
+                            new_marker.tag = mapOf("occurrenceid" to it.id,
+                                    "userid" to it.users_id, "typeid" to it.occurenceType_id,"description" to it.description,
+                                    "lat" to it.lat , "lng" to it.lng)
+
+                            marker_list.add(new_marker)
+                        }
+
+                    }
+                    if(it.occurenceType_id.toInt() == 2){
+                        if(it.users_id.toString().toInt() == user_id){
+                            new_marker = mMap.addMarker(MarkerOptions().position(latlng).title(it.description + " " + it.date_)
+                                    .icon(BitmapDescriptorFactory.defaultMarker(20F)))
+                            new_marker.tag = mapOf("occurrenceid" to it.id,
+                                    "userid" to it.users_id, "typeid" to it.occurenceType_id,"description" to it.description,
+                                    "lat" to it.lat , "lng" to it.lng)
+
+                            marker_list.add(new_marker)
+                        }else{
+                            new_marker = mMap.addMarker(MarkerOptions().position(latlng).title(it.description + " " + it.date_)
+                                    .icon(BitmapDescriptorFactory.defaultMarker(13F)))
+                            new_marker.tag = mapOf("occurrenceid" to it.id,
+                                    "userid" to it.users_id, "typeid" to it.occurenceType_id,"description" to it.description,
+                                    "lat" to it.lat , "lng" to it.lng)
+
+                            marker_list.add(new_marker)
+                        }
+                    }
+
+
                 }
                 val progress: ProgressBar = findViewById(R.id.progressBar_map)
                 progress.visibility = View.INVISIBLE
@@ -223,6 +316,9 @@ class Initial_page : AppCompatActivity(), OnMapReadyCallback, AdapterView.OnItem
 
             override fun onFailure(call: Call<List<Occurrence>>, t: Throwable) {
                 Toast.makeText(applicationContext, t.message, Toast.LENGTH_LONG).show()
+                val progress: ProgressBar = findViewById(R.id.progressBar_map)
+                progress.visibility = View.INVISIBLE
+
             }
 
         })
@@ -278,6 +374,7 @@ class Initial_page : AppCompatActivity(), OnMapReadyCallback, AdapterView.OnItem
                     .putExtra("description",data_marker["description"].toString())
                     .putExtra("lat",data_marker["lat"].toString().toDouble())
                     .putExtra("lng",data_marker["lng"].toString().toDouble())
+            mMap.clear()
             startActivity(intent)
         }
     }
