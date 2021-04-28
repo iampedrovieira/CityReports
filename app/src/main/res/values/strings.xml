@@ -35,5 +35,6 @@
     <string name="enable_gps">Enable gps</string>
     <string name="try_again">Try again</string>
     <string name="filter_km">filter</string>
+    <string name="type_filter">Type Filter</string>
 
 </resources>

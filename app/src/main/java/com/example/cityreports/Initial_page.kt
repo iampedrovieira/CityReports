@@ -11,10 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.ProgressBar
-import android.widget.SeekBar
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -32,11 +29,12 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomappbar.BottomAppBar
+import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class Initial_page : AppCompatActivity(), OnMapReadyCallback {
+class Initial_page : AppCompatActivity(), OnMapReadyCallback, AdapterView.OnItemSelectedListener {
 
     private lateinit var mMap: GoogleMap
     private val LOCATIONPERMISSIONREQUEST = 1
@@ -48,6 +46,8 @@ class Initial_page : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var locationCallback: LocationCallback
     private lateinit var locationRequest: LocationRequest
     private lateinit var filtroKmView:TextView
+    private lateinit var spinner:Spinner
+
     private var filterValue = 100
     private lateinit var marker_list:MutableList<Marker>
     @RequiresApi(Build.VERSION_CODES.N)
@@ -113,6 +113,16 @@ class Initial_page : AppCompatActivity(), OnMapReadyCallback {
 
         //Request location
         createLocationRequest()
+
+        spinner= findViewById(R.id.spinner)
+        spinner.onItemSelectedListener = this
+        ArrayAdapter.createFromResource(this,R.array.type_array,android.R.layout.simple_spinner_item).also {
+            adapter ->
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            // Apply the adapter to the spinner
+            spinner.adapter = adapter
+        }
+        spinner.setSelection(0)
     }
     override fun onPause() {
         super.onPause()
@@ -279,6 +289,21 @@ class Initial_page : AppCompatActivity(), OnMapReadyCallback {
             val distance = FloatArray(1)
             Location.distanceBetween(it.position.latitude,it.position.longitude,actual_lat,actual_lng,distance)
             it.isVisible = distance[0]/1000 <= filterValue.toFloat()
+        }
+    }
+
+    override fun onNothingSelected(parent: AdapterView<*>?) {
+        TODO("Not yet implemented")
+    }
+
+    override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+        marker_list?.forEach {
+            if(it.tag != null){
+                val data_marker = JSONObject(it?.tag?.toString())
+
+                it.isVisible = data_marker?.getString("typeid").toInt() == position + 1
+            }
+
         }
     }
 
