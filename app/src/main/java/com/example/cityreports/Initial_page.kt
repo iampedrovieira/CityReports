@@ -6,12 +6,16 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.location.Location
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.ProgressBar
+import android.widget.SeekBar
+import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.cityreports.api.EndPoints
@@ -43,6 +47,10 @@ class Initial_page : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var lastLocation: Location
     private lateinit var locationCallback: LocationCallback
     private lateinit var locationRequest: LocationRequest
+    private lateinit var filtroKmView:TextView
+    private var filterValue = 100
+    private lateinit var marker_list:MutableList<Marker>
+    @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_initial_page)
@@ -52,7 +60,9 @@ class Initial_page : AppCompatActivity(), OnMapReadyCallback {
         val mapFragment = supportFragmentManager
                 .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
-
+        filtroKmView = findViewById(R.id.textViewFilter)
+        filtroKmView.text = filterValue.toString()+" km "+getString(R.string.filter_km)
+        marker_list = arrayListOf()
         val appbar = findViewById<BottomAppBar>(R.id.bottomAppBar)
         appbar.setNavigationOnClickListener{
             val intent = Intent(this,MenuActivity::class.java)
@@ -67,6 +77,30 @@ class Initial_page : AppCompatActivity(), OnMapReadyCallback {
             startActivity(intent)
         }
 
+        val seekbar = findViewById<SeekBar>(R.id.seekBar_filter)
+        seekbar.setProgress(filterValue,true)
+        seekbar.setOnSeekBarChangeListener(object :
+                SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seek: SeekBar, progress: Int, fromUser: Boolean) {
+                filterValue=progress
+                calcularDistancia()
+                if(progress==100){
+                    filtroKmView.text = "+100 km "+getString(R.string.filter_km)
+                }else{
+                    filtroKmView.text = progress.toString()+" km "+getString(R.string.filter_km)
+                }
+
+            }
+
+            override fun onStartTrackingTouch(seek: SeekBar) {
+                // write custom code for progress is started
+            }
+
+            override fun onStopTrackingTouch(seek: SeekBar) {
+                // write custom code for progress is stopped
+
+            }
+        })
         // Real time Location update
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         locationCallback = object : LocationCallback() {
@@ -100,6 +134,7 @@ class Initial_page : AppCompatActivity(), OnMapReadyCallback {
                     new_marker.tag = mapOf("occurrenceid" to it.id,
                             "userid" to it.users_id, "typeid" to it.occurenceType_id,"description" to it.description,
                             "lat" to it.lat , "lng" to it.lng)
+                    marker_list.add(new_marker)
                 }
                 progress.visibility = View.INVISIBLE
             }
@@ -169,6 +204,8 @@ class Initial_page : AppCompatActivity(), OnMapReadyCallback {
                     new_marker.tag = mapOf("occurrenceid" to it.id,
                             "userid" to it.users_id, "typeid" to it.occurenceType_id,"description" to it.description,
                             "lat" to it.lat , "lng" to it.lng)
+
+                    marker_list.add(new_marker)
                 }
                 val progress: ProgressBar = findViewById(R.id.progressBar_map)
                 progress.visibility = View.INVISIBLE
@@ -234,5 +271,17 @@ class Initial_page : AppCompatActivity(), OnMapReadyCallback {
             startActivity(intent)
         }
     }
+
+    //Filtros
+    fun calcularDistancia(){
+        //Ir a todos os markers
+        marker_list.forEach {
+            val distance = FloatArray(1)
+            Location.distanceBetween(it.position.latitude,it.position.longitude,actual_lat,actual_lng,distance)
+            it.isVisible = distance[0]/1000 <= filterValue.toFloat()
+        }
+    }
+
+
 }
 
