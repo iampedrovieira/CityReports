@@ -1,10 +1,12 @@
 package com.example.cityreports
 
 import android.Manifest
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
+import android.graphics.BitmapFactory
 import android.location.Location
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
@@ -25,10 +27,12 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomappbar.BottomAppBar
+import okhttp3.ResponseBody
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
@@ -37,6 +41,7 @@ import retrofit2.Response
 class Initial_page : AppCompatActivity(), OnMapReadyCallback, AdapterView.OnItemSelectedListener {
 
     private lateinit var mMap: GoogleMap
+    private var mapIsReady=false
     private val LOCATIONPERMISSIONREQUEST = 1
     private var actual_lat=0.0
     private  var actual_lng=0.0
@@ -74,6 +79,7 @@ class Initial_page : AppCompatActivity(), OnMapReadyCallback, AdapterView.OnItem
             intent.putExtra("new",true)
                 .putExtra("lat",actual_lat)
                     .putExtra("lng",actual_lng)
+
             startActivity(intent)
         }
 
@@ -131,29 +137,80 @@ class Initial_page : AppCompatActivity(), OnMapReadyCallback, AdapterView.OnItem
     override fun onResume() {
         super.onResume()
         startLocationUpdates()
-        val request = ServiceBuilder.buildService(EndPoints::class.java)
-        val progress: ProgressBar = findViewById(R.id.progressBar_map)
-        progress.visibility = View.VISIBLE
-        val call = request.getAllOccurrences()
-        call.enqueue(object: Callback<List<Occurrence>>{
-            override fun onResponse(call: Call<List<Occurrence>>, response: Response<List<Occurrence>>) {
-                mMap.clear()
-                response.body()?.forEach {
-                    val latlng = LatLng(it.lat.toDouble(), it.lng.toDouble())
-                    val new_marker:Marker = mMap.addMarker(MarkerOptions().position(latlng).title(it.description + " " + it.date_))
-                    new_marker.tag = mapOf("occurrenceid" to it.id,
-                            "userid" to it.users_id, "typeid" to it.occurenceType_id,"description" to it.description,
-                            "lat" to it.lat , "lng" to it.lng)
-                    marker_list.add(new_marker)
+        if(mapIsReady){
+            val progress: ProgressBar = findViewById(R.id.progressBar_map)
+            progress.visibility = View.VISIBLE
+            mMap.clear()
+            // Create markers from db
+            val request = ServiceBuilder.buildService(EndPoints::class.java)
+
+            val call = request.getAllOccurrences()
+            call.enqueue(object: Callback<List<Occurrence>>{
+                override fun onResponse(call: Call<List<Occurrence>>, response: Response<List<Occurrence>>) {
+                    response.body()?.forEach {
+                        val latlng = LatLng(it.lat.toDouble(), it.lng.toDouble())
+                        it.id
+                        var  new_marker:Marker
+                        val sharedPref: SharedPreferences = getSharedPreferences(getString(R.string.sp_login),Context.MODE_PRIVATE)
+                        val user_id:Int = sharedPref.getInt(getString(R.string.sp_userid_value),0)
+
+                        if(it.occurenceType_id.toInt() == 1){
+                            if(it.users_id.toString().toInt() == user_id){
+                                new_marker = mMap.addMarker(MarkerOptions().position(latlng).title(it.description + " " + it.date_)
+                                        .icon(BitmapDescriptorFactory.defaultMarker(216F)))
+                                new_marker.tag = mapOf("occurrenceid" to it.id,
+                                        "userid" to it.users_id, "typeid" to it.occurenceType_id,"description" to it.description,
+                                        "lat" to it.lat , "lng" to it.lng, "date_" to it.date_)
+
+                                marker_list.add(new_marker)
+                            }else{
+                                new_marker = mMap.addMarker(MarkerOptions().position(latlng).title(it.description + " " + it.date_)
+                                        .icon(BitmapDescriptorFactory.defaultMarker(20F)))
+                                new_marker.tag = mapOf("occurrenceid" to it.id,
+                                        "userid" to it.users_id, "typeid" to it.occurenceType_id,"description" to it.description,
+                                        "lat" to it.lat , "lng" to it.lng,"date_" to it.date_)
+
+                                marker_list.add(new_marker)
+                            }
+
+                        }
+                        if(it.occurenceType_id.toInt() == 2){
+                            if(it.users_id.toString().toInt() == user_id){
+                                new_marker = mMap.addMarker(MarkerOptions().position(latlng).title(it.description + " " + it.date_)
+                                        .icon(BitmapDescriptorFactory.defaultMarker(216F)))
+                                new_marker.tag = mapOf("occurrenceid" to it.id,
+                                        "userid" to it.users_id, "typeid" to it.occurenceType_id,"description" to it.description,
+                                        "lat" to it.lat , "lng" to it.lng,"date_" to it.date_)
+
+                                marker_list.add(new_marker)
+                            }else{
+                                new_marker = mMap.addMarker(MarkerOptions().position(latlng).title(it.description + " " + it.date_)
+                                        .icon(BitmapDescriptorFactory.defaultMarker(20F)))
+                                new_marker.tag = mapOf("occurrenceid" to it.id,
+                                        "userid" to it.users_id, "typeid" to it.occurenceType_id,"description" to it.description,
+                                        "lat" to it.lat , "lng" to it.lng,"date_" to it.date_)
+
+                                marker_list.add(new_marker)
+                            }
+                        }
+
+
+                    }
+                    val progress: ProgressBar = findViewById(R.id.progressBar_map)
+                    progress.visibility = View.INVISIBLE
                 }
-                progress.visibility = View.INVISIBLE
-            }
 
-            override fun onFailure(call: Call<List<Occurrence>>, t: Throwable) {
-                Toast.makeText(applicationContext, t.message, Toast.LENGTH_LONG).show()
-            }
+                override fun onFailure(call: Call<List<Occurrence>>, t: Throwable) {
+                    Toast.makeText(applicationContext, t.message, Toast.LENGTH_LONG).show()
+                    val progress: ProgressBar = findViewById(R.id.progressBar_map)
+                    progress.visibility = View.INVISIBLE
 
-        })
+                }
+
+            })
+        }
+
+
     }
     private fun createLocationRequest(){
         locationRequest = LocationRequest()
@@ -188,6 +245,7 @@ class Initial_page : AppCompatActivity(), OnMapReadyCallback, AdapterView.OnItem
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
         getLocationAccess()
+        mapIsReady=true
         mMap.setOnMarkerClickListener { marker ->
             if (marker.isInfoWindowShown) {
                 marker.hideInfoWindow()
@@ -209,13 +267,51 @@ class Initial_page : AppCompatActivity(), OnMapReadyCallback, AdapterView.OnItem
                 response.body()?.forEach {
                     val latlng = LatLng(it.lat.toDouble(), it.lng.toDouble())
                     it.id
+                    var  new_marker:Marker
+                    val sharedPref: SharedPreferences = getSharedPreferences(getString(R.string.sp_login),Context.MODE_PRIVATE)
+                    val user_id:Int = sharedPref.getInt(getString(R.string.sp_userid_value),0)
 
-                    val new_marker:Marker = mMap.addMarker(MarkerOptions().position(latlng).title(it.description + " " + it.date_))
-                    new_marker.tag = mapOf("occurrenceid" to it.id,
-                            "userid" to it.users_id, "typeid" to it.occurenceType_id,"description" to it.description,
-                            "lat" to it.lat , "lng" to it.lng)
+                    if(it.occurenceType_id.toInt() == 1){
+                        if(it.users_id.toString().toInt() == user_id){
+                            new_marker = mMap.addMarker(MarkerOptions().position(latlng).title(it.description + " " + it.date_)
+                                    .icon(BitmapDescriptorFactory.defaultMarker(216F)))
+                            new_marker.tag = mapOf("occurrenceid" to it.id,
+                                    "userid" to it.users_id, "typeid" to it.occurenceType_id,"description" to it.description,
+                                    "lat" to it.lat , "lng" to it.lng,"date_" to it.date_)
 
-                    marker_list.add(new_marker)
+                            marker_list.add(new_marker)
+                        }else{
+                            new_marker = mMap.addMarker(MarkerOptions().position(latlng).title(it.description + " " + it.date_)
+                                    .icon(BitmapDescriptorFactory.defaultMarker(20F)))
+                            new_marker.tag = mapOf("occurrenceid" to it.id,
+                                    "userid" to it.users_id, "typeid" to it.occurenceType_id,"description" to it.description,
+                                    "lat" to it.lat , "lng" to it.lng,"date_" to it.date_)
+
+                            marker_list.add(new_marker)
+                        }
+
+                    }
+                    if(it.occurenceType_id.toInt() == 2){
+                        if(it.users_id.toString().toInt() == user_id){
+                            new_marker = mMap.addMarker(MarkerOptions().position(latlng).title(it.description + " " + it.date_)
+                                    .icon(BitmapDescriptorFactory.defaultMarker(216F)))
+                            new_marker.tag = mapOf("occurrenceid" to it.id,
+                                    "userid" to it.users_id, "typeid" to it.occurenceType_id,"description" to it.description,
+                                    "lat" to it.lat , "lng" to it.lng,"date_" to it.date_)
+
+                            marker_list.add(new_marker)
+                        }else{
+                            new_marker = mMap.addMarker(MarkerOptions().position(latlng).title(it.description + " " + it.date_)
+                                    .icon(BitmapDescriptorFactory.defaultMarker(20F)))
+                            new_marker.tag = mapOf("occurrenceid" to it.id,
+                                    "userid" to it.users_id, "typeid" to it.occurenceType_id,"description" to it.description,
+                                    "lat" to it.lat , "lng" to it.lng,"date_" to it.date_)
+
+                            marker_list.add(new_marker)
+                        }
+                    }
+
+
                 }
                 val progress: ProgressBar = findViewById(R.id.progressBar_map)
                 progress.visibility = View.INVISIBLE
@@ -223,9 +319,13 @@ class Initial_page : AppCompatActivity(), OnMapReadyCallback, AdapterView.OnItem
 
             override fun onFailure(call: Call<List<Occurrence>>, t: Throwable) {
                 Toast.makeText(applicationContext, t.message, Toast.LENGTH_LONG).show()
+                val progress: ProgressBar = findViewById(R.id.progressBar_map)
+                progress.visibility = View.INVISIBLE
+
             }
 
         })
+        mMap.setInfoWindowAdapter(CustomInfoWindowForGoogleMap(this))
     }
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         if (requestCode == LOCATIONPERMISSIONREQUEST) {
@@ -278,6 +378,7 @@ class Initial_page : AppCompatActivity(), OnMapReadyCallback, AdapterView.OnItem
                     .putExtra("description",data_marker["description"].toString())
                     .putExtra("lat",data_marker["lat"].toString().toDouble())
                     .putExtra("lng",data_marker["lng"].toString().toDouble())
+            mMap.clear()
             startActivity(intent)
         }
     }
@@ -299,13 +400,63 @@ class Initial_page : AppCompatActivity(), OnMapReadyCallback, AdapterView.OnItem
     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
         marker_list?.forEach {
             if(it.tag != null){
-                val data_marker = JSONObject(it?.tag?.toString())
+                val data_marker = it.tag as Map<*,*>
 
-                it.isVisible = data_marker?.getString("typeid").toInt() == position + 1
+                it.isVisible = data_marker["typeid"].toString().toInt() == position + 1
             }
 
         }
     }
+
+    //Class "adapter" to info
+    class CustomInfoWindowForGoogleMap(context: Context) : GoogleMap.InfoWindowAdapter {
+
+        var mContext = context
+        var mWindow = (context as Activity).layoutInflater.inflate(R.layout.map_info, null)
+
+        private fun rendowWindowText(marker: Marker, view: View){
+            val desc = view.findViewById<TextView>(R.id.textViewInfoDesc)
+            val type = view.findViewById<TextView>(R.id.textViewInfoTipo)
+            val data = view.findViewById<TextView>(R.id.textViewInfoDate)
+            val img:ImageView = view.findViewById<ImageView>(R.id.imageViewInfo)
+            val tag = marker.tag as Map<*,*>
+            var occurence_id = tag["occurrenceid"].toString().toInt()
+
+            desc.text= tag["description"].toString()
+            if(tag["typeid"].toString().toInt()==1){
+                type.text = "Transito"
+            }else{
+                type.text = "Buraco na via"
+            }
+            data.text= tag["date_"].toString()
+
+            val request = ServiceBuilder.buildService(EndPoints::class.java)
+            val call = request.getImg(occurence_id)
+
+            call.enqueue(object: Callback<ResponseBody>{
+                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+
+                    val imageBitmap = BitmapFactory.decodeStream(response.body()?.byteStream())
+                    img.setImageBitmap(imageBitmap)
+                }
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                    TODO("Not yet implemented")
+                }
+            })
+
+        }
+
+        override fun getInfoContents(marker: Marker): View {
+            rendowWindowText(marker, mWindow)
+            return mWindow
+        }
+
+        override fun getInfoWindow(marker: Marker): View? {
+            rendowWindowText(marker, mWindow)
+            return mWindow
+        }
+    }
+
 
 
 }
