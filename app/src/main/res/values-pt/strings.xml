@@ -30,4 +30,5 @@
     <string name="type_filter">Filtro por tipo</string>
     <string name="changes_not_saved">As mudanças nao forma gravadas</string>
     <string name="empy_fields">Campos Vazios</string>
+    <string name="ocurrence_deleted">Ocorrencia apagada</string>
 </resources>
