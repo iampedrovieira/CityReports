@@ -165,7 +165,7 @@ class Initial_page : AppCompatActivity(), OnMapReadyCallback, AdapterView.OnItem
                                 marker_list.add(new_marker)
                             }else{
                                 new_marker = mMap.addMarker(MarkerOptions().position(latlng).title(it.description + " " + it.date_)
-                                        .icon(BitmapDescriptorFactory.defaultMarker(212F)))
+                                        .icon(BitmapDescriptorFactory.defaultMarker(20F)))
                                 new_marker.tag = mapOf("occurrenceid" to it.id,
                                         "userid" to it.users_id, "typeid" to it.occurenceType_id,"description" to it.description,
                                         "lat" to it.lat , "lng" to it.lng)
@@ -177,7 +177,7 @@ class Initial_page : AppCompatActivity(), OnMapReadyCallback, AdapterView.OnItem
                         if(it.occurenceType_id.toInt() == 2){
                             if(it.users_id.toString().toInt() == user_id){
                                 new_marker = mMap.addMarker(MarkerOptions().position(latlng).title(it.description + " " + it.date_)
-                                        .icon(BitmapDescriptorFactory.defaultMarker(20F)))
+                                        .icon(BitmapDescriptorFactory.defaultMarker(216F)))
                                 new_marker.tag = mapOf("occurrenceid" to it.id,
                                         "userid" to it.users_id, "typeid" to it.occurenceType_id,"description" to it.description,
                                         "lat" to it.lat , "lng" to it.lng)
@@ -185,7 +185,7 @@ class Initial_page : AppCompatActivity(), OnMapReadyCallback, AdapterView.OnItem
                                 marker_list.add(new_marker)
                             }else{
                                 new_marker = mMap.addMarker(MarkerOptions().position(latlng).title(it.description + " " + it.date_)
-                                        .icon(BitmapDescriptorFactory.defaultMarker(13F)))
+                                        .icon(BitmapDescriptorFactory.defaultMarker(20F)))
                                 new_marker.tag = mapOf("occurrenceid" to it.id,
                                         "userid" to it.users_id, "typeid" to it.occurenceType_id,"description" to it.description,
                                         "lat" to it.lat , "lng" to it.lng)
@@ -277,15 +277,15 @@ class Initial_page : AppCompatActivity(), OnMapReadyCallback, AdapterView.OnItem
                                     .icon(BitmapDescriptorFactory.defaultMarker(216F)))
                             new_marker.tag = mapOf("occurrenceid" to it.id,
                                     "userid" to it.users_id, "typeid" to it.occurenceType_id,"description" to it.description,
-                                    "lat" to it.lat , "lng" to it.lng,"date_" to it.date_)
+                                    "lat" to it.lat , "lng" to it.lng)
 
                             marker_list.add(new_marker)
                         }else{
                             new_marker = mMap.addMarker(MarkerOptions().position(latlng).title(it.description + " " + it.date_)
-                                    .icon(BitmapDescriptorFactory.defaultMarker(212F)))
+                                    .icon(BitmapDescriptorFactory.defaultMarker(20F)))
                             new_marker.tag = mapOf("occurrenceid" to it.id,
                                     "userid" to it.users_id, "typeid" to it.occurenceType_id,"description" to it.description,
-                                    "lat" to it.lat , "lng" to it.lng,"date_" to it.date_)
+                                    "lat" to it.lat , "lng" to it.lng)
 
                             marker_list.add(new_marker)
                         }
@@ -294,18 +294,18 @@ class Initial_page : AppCompatActivity(), OnMapReadyCallback, AdapterView.OnItem
                     if(it.occurenceType_id.toInt() == 2){
                         if(it.users_id.toString().toInt() == user_id){
                             new_marker = mMap.addMarker(MarkerOptions().position(latlng).title(it.description + " " + it.date_)
-                                    .icon(BitmapDescriptorFactory.defaultMarker(20F)))
+                                    .icon(BitmapDescriptorFactory.defaultMarker(216F)))
                             new_marker.tag = mapOf("occurrenceid" to it.id,
                                     "userid" to it.users_id, "typeid" to it.occurenceType_id,"description" to it.description,
-                                    "lat" to it.lat , "lng" to it.lng,"date_" to it.date_)
+                                    "lat" to it.lat , "lng" to it.lng)
 
                             marker_list.add(new_marker)
                         }else{
                             new_marker = mMap.addMarker(MarkerOptions().position(latlng).title(it.description + " " + it.date_)
-                                    .icon(BitmapDescriptorFactory.defaultMarker(13F)))
+                                    .icon(BitmapDescriptorFactory.defaultMarker(20F)))
                             new_marker.tag = mapOf("occurrenceid" to it.id,
                                     "userid" to it.users_id, "typeid" to it.occurenceType_id,"description" to it.description,
-                                    "lat" to it.lat , "lng" to it.lng,"date_" to it.date_)
+                                    "lat" to it.lat , "lng" to it.lng)
 
                             marker_list.add(new_marker)
                         }
