@@ -1,10 +1,12 @@
 package com.example.cityreports
 
 import android.Manifest
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
+import android.graphics.BitmapFactory
 import android.location.Location
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
@@ -30,6 +32,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomappbar.BottomAppBar
+import okhttp3.ResponseBody
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
@@ -274,7 +277,7 @@ class Initial_page : AppCompatActivity(), OnMapReadyCallback, AdapterView.OnItem
                                     .icon(BitmapDescriptorFactory.defaultMarker(216F)))
                             new_marker.tag = mapOf("occurrenceid" to it.id,
                                     "userid" to it.users_id, "typeid" to it.occurenceType_id,"description" to it.description,
-                                    "lat" to it.lat , "lng" to it.lng)
+                                    "lat" to it.lat , "lng" to it.lng,"date_" to it.date_)
 
                             marker_list.add(new_marker)
                         }else{
@@ -282,7 +285,7 @@ class Initial_page : AppCompatActivity(), OnMapReadyCallback, AdapterView.OnItem
                                     .icon(BitmapDescriptorFactory.defaultMarker(212F)))
                             new_marker.tag = mapOf("occurrenceid" to it.id,
                                     "userid" to it.users_id, "typeid" to it.occurenceType_id,"description" to it.description,
-                                    "lat" to it.lat , "lng" to it.lng)
+                                    "lat" to it.lat , "lng" to it.lng,"date_" to it.date_)
 
                             marker_list.add(new_marker)
                         }
@@ -294,7 +297,7 @@ class Initial_page : AppCompatActivity(), OnMapReadyCallback, AdapterView.OnItem
                                     .icon(BitmapDescriptorFactory.defaultMarker(20F)))
                             new_marker.tag = mapOf("occurrenceid" to it.id,
                                     "userid" to it.users_id, "typeid" to it.occurenceType_id,"description" to it.description,
-                                    "lat" to it.lat , "lng" to it.lng)
+                                    "lat" to it.lat , "lng" to it.lng,"date_" to it.date_)
 
                             marker_list.add(new_marker)
                         }else{
@@ -302,7 +305,7 @@ class Initial_page : AppCompatActivity(), OnMapReadyCallback, AdapterView.OnItem
                                     .icon(BitmapDescriptorFactory.defaultMarker(13F)))
                             new_marker.tag = mapOf("occurrenceid" to it.id,
                                     "userid" to it.users_id, "typeid" to it.occurenceType_id,"description" to it.description,
-                                    "lat" to it.lat , "lng" to it.lng)
+                                    "lat" to it.lat , "lng" to it.lng,"date_" to it.date_)
 
                             marker_list.add(new_marker)
                         }
@@ -322,6 +325,7 @@ class Initial_page : AppCompatActivity(), OnMapReadyCallback, AdapterView.OnItem
             }
 
         })
+        mMap.setInfoWindowAdapter(CustomInfoWindowForGoogleMap(this))
     }
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         if (requestCode == LOCATIONPERMISSIONREQUEST) {
@@ -396,13 +400,63 @@ class Initial_page : AppCompatActivity(), OnMapReadyCallback, AdapterView.OnItem
     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
         marker_list?.forEach {
             if(it.tag != null){
-                val data_marker = JSONObject(it?.tag?.toString())
+                val data_marker = it.tag as Map<*,*>
 
-                it.isVisible = data_marker?.getString("typeid").toInt() == position + 1
+                it.isVisible = data_marker["typeid"].toString().toInt() == position + 1
             }
 
         }
     }
+
+    //Class "adapter" to info
+    class CustomInfoWindowForGoogleMap(context: Context) : GoogleMap.InfoWindowAdapter {
+
+        var mContext = context
+        var mWindow = (context as Activity).layoutInflater.inflate(R.layout.map_info, null)
+
+        private fun rendowWindowText(marker: Marker, view: View){
+            val desc = view.findViewById<TextView>(R.id.textViewInfoDesc)
+            val type = view.findViewById<TextView>(R.id.textViewInfoTipo)
+            val data = view.findViewById<TextView>(R.id.textViewInfoDate)
+            val img:ImageView = view.findViewById<ImageView>(R.id.imageViewInfo)
+            val tag = marker.tag as Map<*,*>
+            var occurence_id = tag["occurrenceid"].toString().toInt()
+
+            desc.text= tag["description"].toString()
+            if(tag["typeid"].toString().toInt()==1){
+                type.text = "Transito"
+            }else{
+                type.text = "Buraco na via"
+            }
+            data.text= tag["date_"].toString()
+
+            val request = ServiceBuilder.buildService(EndPoints::class.java)
+            val call = request.getImg(occurence_id)
+
+            call.enqueue(object: Callback<ResponseBody>{
+                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+
+                    val imageBitmap = BitmapFactory.decodeStream(response.body()?.byteStream())
+                    img.setImageBitmap(imageBitmap)
+                }
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                    TODO("Not yet implemented")
+                }
+            })
+
+        }
+
+        override fun getInfoContents(marker: Marker): View {
+            rendowWindowText(marker, mWindow)
+            return mWindow
+        }
+
+        override fun getInfoWindow(marker: Marker): View? {
+            rendowWindowText(marker, mWindow)
+            return mWindow
+        }
+    }
+
 
 
 }
