@@ -43,6 +43,11 @@ class MainActivity : AppCompatActivity() {
         val intent = Intent(this,Initial_page::class.java)
         var username:EditText = findViewById(R.id.editTextTextEmailAddress3)
         var password:EditText = findViewById(R.id.editTextTextPassword3)
+
+        if(username.text.toString()==""||password.text.toString()==""){
+            Toast.makeText(applicationContext, R.string.empy_fields , Toast.LENGTH_LONG).show()
+            return
+        }
         val progress:ProgressBar = findViewById(R.id.progressBar_Login)
         progress.visibility = View.VISIBLE
         val call = request.verifyLogin(username.text.toString(),password.text.toString())
@@ -50,14 +55,15 @@ class MainActivity : AppCompatActivity() {
         call.enqueue(object: Callback<OutPutLogin> {
             override fun onResponse(call: Call<OutPutLogin>, response: Response<OutPutLogin>) {
 
-                if(response.isSuccessful ){
+                if(response.isSuccessful){
                     val user:OutPutLogin = response.body()!!
-                        if(user.userid !="-1"){
+
+                        if(user.id !="-1"){
                             progress.visibility = View.INVISIBLE
                             val sharedPref:SharedPreferences = getSharedPreferences(getString(R.string.sp_login),Context.MODE_PRIVATE)
                             with(sharedPref.edit()){
                                 putBoolean(getString(R.string.sp_login_value),true)
-                                putInt(getString(R.string.sp_userid_value),user.userid.toInt())
+                                putInt(getString(R.string.sp_userid_value),user.id.toInt())
                                 commit()
                             }
                             //Toast.makeText(applicationContext, "${R.string.welcome.to} ${user.name} " , Toast.LENGTH_LONG).show()

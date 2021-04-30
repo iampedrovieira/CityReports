@@ -39,6 +39,7 @@ class NoteOpen : AppCompatActivity() {
         if(item.itemId == android.R.id.home){
             val replyIntent = Intent()
             setResult(Activity.RESULT_OK,replyIntent)
+            Toast.makeText(applicationContext, R.string.changes_not_saved, Toast.LENGTH_LONG).show()
             finish()
         }
         if(item.itemId == R.id.Delete){

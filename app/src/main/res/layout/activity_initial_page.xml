@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/blue_secondary"
     tools:context=".Initial_page">
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -37,12 +36,16 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="30dp"
             android:contentDescription="TODO"
+
             app:backgroundTint="@color/blue_secondary"
             app:layout_anchor="@id/bottomAppBar"
             app:layout_constraintBottom_toBottomOf="@+id/bottomAppBar"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:srcCompat="@drawable/ic_add_24px"
+            android:defaultFocusHighlightEnabled="true"
+            tools:ignore="VectorDrawableCompat" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline2"
@@ -59,6 +62,47 @@
             android:layout_marginStart="187dp"
             android:layout_marginLeft="187dp"
             android:layout_marginTop="300dp" />
+
+        <SeekBar
+            android:id="@+id/seekBar_filter"
+            android:layout_width="150dp"
+            android:layout_height="25dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="635dp"
+            android:background="@color/blue_secondary" />
+
+        <TextView
+            android:id="@+id/textViewFilter"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="600dp"
+            android:background="@color/blue_secondary"
+            android:text="TextView"
+            android:textColor="@color/white" />
+
+        <Spinner
+            android:id="@+id/spinner"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="195dp"
+            android:layout_marginLeft="195dp"
+            android:layout_marginTop="635dp"
+            android:background="@color/blue_secondary"
+            android:popupBackground="@color/blue_secondary" />
+
+        <TextView
+            android:id="@+id/textViewTypeFilter"
+            android:layout_width="153dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="195dp"
+            android:layout_marginLeft="195dp"
+            android:layout_marginTop="600dp"
+            android:background="@color/blue_secondary"
+            android:text="@string/type_filter"
+            android:textColor="@color/white" />
 
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
